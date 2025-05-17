@@ -16,7 +16,7 @@ public class Card : MonoBehaviour
     private const int ORDER_DRAGGING = 1500;
     
     //Hovering Variables
-    private float scaleTweenTime = 0.2f;
+    private float scaleTweenTime = 0.3f;
     private float scalePercent = 1.2f;
     private Tween hoverScaleTween;
     
@@ -139,6 +139,7 @@ public class Card : MonoBehaviour
             
             MoveCard(nextCardPos, 1);
             
+
         }
         else
         {
@@ -174,6 +175,7 @@ public class Card : MonoBehaviour
                         
                         cardCanvas.sortingOrder = originalSortingOrder;
                         BattlefieldManager.instance.NewCardOnBattlefield(gameObject);
+                        HandManager.instance.UpdateHandPositions();
                         break;
                 }
                
