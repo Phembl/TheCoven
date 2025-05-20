@@ -1,15 +1,22 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using VInspector;
+using DG.Tweening;
 
-public class BattlefieldManager : MonoBehaviour
+public class ArenaManager : MonoBehaviour
 {
-    public static BattlefieldManager instance;
+    public static ArenaManager instance;
+    [HideInInspector] public float speedMult = 1;
     
     [Tab("References")]
     [SerializeField] private GameObject battlefieldCardHolder;
-    [EndTab] 
+
+    [EndTab]
+
+    //Speed variables
+    private float animationScaleSpeed = 0.3f;
     
     // Global consts
     private const float BATTLEFIELD_CARDSPACE = 25f;
@@ -25,6 +32,8 @@ public class BattlefieldManager : MonoBehaviour
     void Start()
     {
         battlefieldBounds = GetComponent<BoxCollider2D>();
+        animationScaleSpeed *= speedMult;
+        
     }
     
     // This is called by the cards to find their position on the battlefield when dropped
@@ -85,6 +94,49 @@ public class BattlefieldManager : MonoBehaviour
         }
         
     }
+
+    public void AttackButtonIsPressed()
+    {
+        StartCoroutine(ResolveBoard());
+    }
+    
+    //This resolves the Board, taking one child after another and calling the card effects
+    private IEnumerator ResolveBoard() 
+    {
+        Debug.Log("Resolving board");
+
+        foreach (Transform nextCard in battlefieldCardHolder.transform)
+        {
+            //Prepare Card
+            Canvas nextCardCanvas = nextCard.GetChild(0).GetComponent<Canvas>();
+            int nextCardOriginalSortingOrder = nextCardCanvas.sortingOrder;
+            
+            //Animate Card
+            nextCardCanvas.sortingOrder += 1000;
+            nextCard.DOScale(1.2f, animationScaleSpeed);
+            yield return new WaitForSeconds(animationScaleSpeed + 0.2f);
+            
+            Effect nextCardEffect = nextCard.GetComponent<Effect>();
+            
+            if (nextCardEffect != null)
+            {
+                int boardID = nextCard.transform.GetSiblingIndex();
+                yield return StartCoroutine(nextCardEffect.DoEffect(boardID));
+            }
+            else
+            {
+                Debug.Log("No effect");
+            }
+            
+            yield return new WaitForSeconds(1f);
+            
+            //Finish Up Card
+            nextCardCanvas.sortingOrder = nextCardOriginalSortingOrder;
+            nextCard.DOScale(1f, animationScaleSpeed);
+            yield return new WaitForSeconds(animationScaleSpeed);
+        }
+    }
+    
 }
 
 

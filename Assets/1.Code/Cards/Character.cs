@@ -2,9 +2,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using VInspector;
+using DG.Tweening;
 
 public class Character : Card
 {
+    private int currentPower;
+    private int effectStrength;
+    private int effectTargetID;
     
     [Tab("Properties")]
     [Header("Character Values")]
@@ -24,27 +28,28 @@ public class Character : Card
     [SerializeField] private Passive characterPassive = Passive.None;
     
     [Tooltip("The type of effect this character card has.")]
-    [SerializeField] private Effect characterEffect = Effect.None;
+    [SerializeField] private EffectType characterEffect = EffectType.None;
     
     //If Buff
-    [ShowIf("characterEffect", Effect.Buff)] 
+    [ShowIf("characterEffect", EffectType.Buff)] 
     [SerializeField] private CardTargets buffTarget = CardTargets.Random;
     [SerializeField] private int buffAmount = 1;
     
     //If Carddraw
-    [ShowIf("characterEffect", Effect.CardDraw)] 
+    [ShowIf("characterEffect", EffectType.CardDraw)] 
     [SerializeField] private int drawAmount = 1;
     [EndIf]
     
     //If Tinker
-    [ShowIf("characterEffect", Effect.Tinker)] 
+    [ShowIf("characterEffect", EffectType.Tinker)] 
     [SerializeField] private Gadgets gadget = Gadgets.Bomb;
     [SerializeField] private SummonTargets tinkerTarget = SummonTargets.Right;
+    [EndIf]
     
     // Repeat
     [SerializeField] private bool repeat;
     [ShowIf("repeat")] 
-    [SerializeField] private int repeatAmount = 1;
+    [SerializeField] private int repeatCount = 1;
     [EndIf]
     
     [EndTab]
@@ -76,7 +81,7 @@ public class Character : Card
         Cyber,
         Beast
     }
-    private enum Effect
+    private enum EffectType
     {
         None,       
         Individual,
@@ -119,16 +124,14 @@ public class Character : Card
         Bomb,
         Placeholder
     }
-
-    void Awake()
-    {
-        InitializeCard();
-    }
+    
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Start()
     {
         base.Start(); // Runs Start in base class
+        currentPower = basePower;
+        InitializeCard();
     }
 
     void InitializeCard()
@@ -141,34 +144,47 @@ public class Character : Card
         
         titleText.text = title; //Write card title
         cardImage.sprite = image; // Set image sprite
-        powerText.text = basePower.ToString(); //Write Card Power
+        powerText.text = currentPower.ToString(); //Write Card Power
 
+        string newEffectText = "";
         switch (characterEffect)
         {
-            case Effect.None: 
+            case EffectType.None: 
                 effectText.text = "";
                 effectTextbox.rectTransform.sizeDelta = new Vector2(effectTextbox.rectTransform.sizeDelta.x, 45f);
                 titleText.rectTransform.position = new Vector2(titleText.rectTransform.position.x, -225);
                 break;
-            case Effect.Individual:
+            case EffectType.Individual:
                 break;
-            case Effect.Buff:
+            case EffectType.Buff:
                 Effect_Buff effectBuffComponent = gameObject.AddComponent<Effect_Buff>();
-                effectBuffComponent.buffAmount = buffAmount;
-                effectBuffComponent.repeatAmount = repeatAmount;
-                effectBuffComponent.targetID = (int)buffTarget;
-                string newEffectText = effectBuffComponent.GetEffectText();
-                effectText.text = newEffectText;
+                effectStrength = buffAmount;
+                effectTargetID = (int)buffTarget;
                 break;
-            case Effect.CardDraw:
+            case EffectType.CardDraw:
                 Effect_CardDraw effectCardDrawComponent = gameObject.AddComponent<Effect_CardDraw>();
-                effectCardDrawComponent.drawAmount = drawAmount;
+                effectStrength = drawAmount;
+                effectTargetID = 99; // Irrelevant
                 break;
             default:
                 break;
                 
         }
+
+        if (characterEffect != EffectType.None)
+        {
+            Effect effectComponent = gameObject.GetComponent<Effect>();
+            effectComponent.strength = effectStrength;
+            effectComponent.targetID = effectTargetID;
         
+            if (!repeat) effectComponent.repeatCount = 0;
+            else effectComponent.repeatCount = repeatCount;
+        
+            newEffectText = effectComponent.GetEffectText();
+            effectText.text = newEffectText;
+        }
+        
+
     }
 
     void ConstructEffectText()
@@ -176,5 +192,17 @@ public class Character : Card
         
     }
 
+    public void UpdatePower(int powerToAdd)
+    {
+        currentPower += powerToAdd;
+
+        if (currentPower == basePower) powerText.color = Color.white;
+        if (currentPower > basePower) powerText.color = Color.green;
+        if (currentPower < basePower) powerText.color = Color.red;
+
+
+        transform.DOShakeRotation(0.1f, new Vector3(0, 0, 10));
+        powerText.text = currentPower.ToString();
+    }
     
 }

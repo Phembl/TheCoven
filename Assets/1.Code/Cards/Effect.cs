@@ -1,26 +1,31 @@
+using System.Collections;
 using UnityEngine;
 
 public abstract class Effect : MonoBehaviour
 {
+    public int strength;
+    public int repeatCount;
+    public int targetID;
    
     protected virtual void Start()
     {
         
     }
     
-    public abstract void  DoEffect();
+    public abstract IEnumerator DoEffect(int boardID);
 
     public abstract string GetEffectText();
 
-    protected string ConstructEffectTargetText(int targetID, int randomAmount = 1, bool startSentence = false)
+    protected string ConstructEffectTargetText(bool startSentence = false)
     {
+        int randomAmount = repeatCount + 1;
         string effectTargetText = "";
 
         switch (targetID)
         {
             case 0: // Random
-                if (randomAmount == 1) effectTargetText = startSentence ? "A random card on the battlefield" : "a random card on the battlefield";
-                else effectTargetText = $"{randomAmount} random cards on the battlefield";
+                if (randomAmount == 1) effectTargetText = startSentence ? "A random card in the arena" : "a random card in the arena";
+                else effectTargetText = $"{randomAmount} random cards in the arena";
                 break;
             
             case 1: //Self
@@ -36,7 +41,7 @@ public abstract class Effect : MonoBehaviour
                 break;
             
             case 4: //All cards
-                effectTargetText = startSentence ? "All cards on the battlefield" : "all cards on the battlefield";
+                effectTargetText = startSentence ? "All cards in the arena" : "all cards in the arena";
                 break;
             
             case 5: //Deck Random
@@ -56,7 +61,7 @@ public abstract class Effect : MonoBehaviour
             case 8: //Hand All
                 effectTargetText = startSentence ? "All cards in hand" : "all cards in hand";
                 break;
-                break;
+               
             
             default:
                 effectTargetText = "<color=red>PLACEHOLDER</color>";

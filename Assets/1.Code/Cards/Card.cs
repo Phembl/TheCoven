@@ -129,12 +129,12 @@ public class Card : MonoBehaviour
             if (Input.mousePosition.x < Screen.width / 2) //Battlefield left
             {
                 Debug.Log("Dropping Card to Battlefield left");
-                nextCardPos = BattlefieldManager.instance.GetBattlefieldPosition(-1);
+                nextCardPos = ArenaManager.instance.GetBattlefieldPosition(-1);
             }
             else //Battlefield right
             {
                 Debug.Log("Dropping Card to Battlefield right");
-                nextCardPos = BattlefieldManager.instance.GetBattlefieldPosition(1);
+                nextCardPos = ArenaManager.instance.GetBattlefieldPosition(1);
             }
             
             MoveCard(nextCardPos, Places.Battlefield);
@@ -173,7 +173,7 @@ public class Card : MonoBehaviour
                         currentPlace = Places.Battlefield;
                         
                         cardCanvas.sortingOrder = originalSortingOrder;
-                        BattlefieldManager.instance.NewCardOnBattlefield(gameObject);
+                        ArenaManager.instance.NewCardOnBattlefield(gameObject);
                         HandManager.instance.UpdateHandPositions();
                         break;
                 }

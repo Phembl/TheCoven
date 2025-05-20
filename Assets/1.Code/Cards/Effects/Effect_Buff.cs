@@ -1,24 +1,34 @@
+using System.Collections;
 using UnityEngine;
 
 public class Effect_Buff : Effect
 {
-    
-    [SerializeField] public int buffAmount;
-    [SerializeField] public int repeatAmount;
-    [SerializeField] public int targetID;
-    
-    public override void DoEffect()
-    {
-        Debug.Log("Do effect");
-    }
 
     public override string GetEffectText()
     {
         string effectText = "";
-        string targetText = base.ConstructEffectTargetText(targetID, repeatAmount);
+        int buffAmount = strength;
+        
+        //Calls the base class to construct target text 
+        string targetText = ConstructEffectTargetText();
 
         effectText = $"Increase the power of {targetText} by <color=green>{buffAmount}</color>.";
         
         return effectText;
+    }
+    
+    public override IEnumerator DoEffect(int boardID)
+    {
+        int buffAmount = strength;
+        //BoardID is the sibling number of this card in the arena
+        Debug.Log("Do Buff effect");
+        for (int i = 0; i <= repeatCount; i++)
+        {
+            GameObject cardTarget = BattleManager.instance.GetCardTarget(targetID, boardID);
+            cardTarget.GetComponent<Character>().UpdatePower(buffAmount);
+            yield return new WaitForSeconds(0.2f);
+        }
+ 
+        yield return null;
     }
 }
