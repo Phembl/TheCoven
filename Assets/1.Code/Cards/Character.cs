@@ -17,17 +17,34 @@ public class Character : Card
     [Space] 
     [SerializeField] private Class characterClass = Class.Brawler;
     [SerializeField] private Tribe characterTribe = Tribe.Cyber;
+    [EndTab]
     
+    [Tab("Effect")]
     [Header("Effect Settings")]
+    [SerializeField] private Passive characterPassive = Passive.None;
+    
     [Tooltip("The type of effect this character card has.")]
-    [SerializeField]
-    private Effect characterEffect = Effect.None;
-
+    [SerializeField] private Effect characterEffect = Effect.None;
+    
+    //If Buff
     [ShowIf("characterEffect", Effect.Buff)] 
-    [SerializeField] private int buffValue;
     [SerializeField] private CardTargets buffTarget = CardTargets.Random;
-    [ShowIf("buffTarget", CardTargets.Random)]
-    [SerializeField] private int randomAmount;
+    [SerializeField] private int buffAmount = 1;
+    
+    //If Carddraw
+    [ShowIf("characterEffect", Effect.CardDraw)] 
+    [SerializeField] private int drawAmount = 1;
+    [EndIf]
+    
+    //If Tinker
+    [ShowIf("characterEffect", Effect.Tinker)] 
+    [SerializeField] private Gadgets gadget = Gadgets.Bomb;
+    [SerializeField] private SummonTargets tinkerTarget = SummonTargets.Right;
+    
+    // Repeat
+    [SerializeField] private bool repeat;
+    [ShowIf("repeat")] 
+    [SerializeField] private int repeatAmount = 1;
     [EndIf]
     
     [EndTab]
@@ -48,7 +65,10 @@ public class Character : Card
         Soldier,
         Hacker,
         Sniper,
-        Hextech
+        Trickster,
+        Tinkerer,
+        Technician,
+        Hexxe
     }
 
     private enum Tribe
@@ -61,20 +81,43 @@ public class Character : Card
         None,       
         Individual,
         Buff,
-        Summon
+        CardDraw,
+        Tinker,
+        Augment,
+        Hex
+    }
+
+    private enum Passive
+    {
+        None,
+        Stealth,
+        Slick
     }
 
     private enum CardTargets
     {
         Random,
         Self,
-        Next,
-        Last,
+        Right,
+        Left,
         All,
         DeckRandom,
         DeckAll,
         HandRandom,
         HandAll
+    }
+
+    private enum SummonTargets
+    {
+        Right,
+        Left,
+        Random
+    }
+
+    private enum Gadgets
+    {
+        Bomb,
+        Placeholder
     }
 
     void Awake()
@@ -110,13 +153,20 @@ public class Character : Card
             case Effect.Individual:
                 break;
             case Effect.Buff:
-                Effect_Buff effectComponent = gameObject.AddComponent<Effect_Buff>();
-                effectComponent.buffAmount = buffValue;
-                effectComponent.randomAmount = randomAmount;
-                effectComponent.targetID = (int)buffTarget;
-                string newEffectText = effectComponent.GetEffectText();
+                Effect_Buff effectBuffComponent = gameObject.AddComponent<Effect_Buff>();
+                effectBuffComponent.buffAmount = buffAmount;
+                effectBuffComponent.repeatAmount = repeatAmount;
+                effectBuffComponent.targetID = (int)buffTarget;
+                string newEffectText = effectBuffComponent.GetEffectText();
                 effectText.text = newEffectText;
                 break;
+            case Effect.CardDraw:
+                Effect_CardDraw effectCardDrawComponent = gameObject.AddComponent<Effect_CardDraw>();
+                effectCardDrawComponent.drawAmount = drawAmount;
+                break;
+            default:
+                break;
+                
         }
         
     }

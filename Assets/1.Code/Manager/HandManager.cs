@@ -152,7 +152,7 @@ public class HandManager : MonoBehaviour
         // Calculate position for each card
         for (int i = 0; i < totalCards; i++) {
             positions[i] = startX + i * (CARD_WIDTH + actualSpacing);
-            Debug.Log($"Calculated position{i}: {positions[i]}");
+            //Debug.Log($"Calculated position{i}: {positions[i]}");
         }
         
         return positions;

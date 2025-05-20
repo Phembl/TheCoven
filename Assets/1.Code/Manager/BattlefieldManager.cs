@@ -64,6 +64,75 @@ public class BattlefieldManager : MonoBehaviour
 
     public void NewCardOnBattlefield(GameObject card)
     {
+        //This is called from the card when it is dropped to the battlefield
         card.transform.SetParent(battlefieldCardHolder.transform);
+        
+        //Prepare Ray to check card order
+        Vector2 rayOrigin = new Vector2((((battlefieldBounds.size.x + 100) / 2) * -1), battlefieldBounds.offset.y);
+        Vector2 rayDirection = Vector2.right;
+        int rayLayer = 1 << LayerMask.NameToLayer("Card");
+        
+        Debug.Log(rayOrigin);
+        
+        RaycastHit2D[] rayHits = Physics2D.RaycastAll(rayOrigin, rayDirection, 5000, rayLayer);
+        
+        //Set Card Sibling order to match Battlefield order
+        int siblingIndex = 0;
+        foreach (RaycastHit2D hit in rayHits)
+        {
+            hit.transform.SetSiblingIndex(siblingIndex);
+            siblingIndex++;
+        }
+        
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

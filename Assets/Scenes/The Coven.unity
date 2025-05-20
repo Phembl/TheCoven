@@ -1328,7 +1328,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.43293878, g: 0.5849871, b: 0.6509434, a: 0}
+  m_BackGroundColor: {r: 0.3554201, g: 0.4298294, b: 0.46226418, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2659,7 +2659,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.8396226, g: 0.77034956, b: 0.5742702, a: 1}
+  m_Color: {r: 0.6698113, g: 0.6221402, b: 0.48972055, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6103,6 +6103,10 @@ PrefabInstance:
       value: Werner
       objectReference: {fileID: 0}
     - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      propertyPath: repeat
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: basePower
       value: 5
       objectReference: {fileID: 0}
@@ -6112,7 +6116,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: buffTarget
-      value: 2
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      propertyPath: randomAmount
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: baseEndurance

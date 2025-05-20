@@ -25,12 +25,12 @@ public class Card : MonoBehaviour
     private Vector3 dragOffset;
     
     //State tracking variable
-    private enum Places
+    public enum Places
     {
-        inDeck,
-        inHand,
-        onBattlefield,
-        inExhaust
+        Deck,
+        Hand,
+        Battlefield,
+        Exhaust
     }
     private enum States
     {
@@ -40,7 +40,7 @@ public class Card : MonoBehaviour
         moving
     }
     [ShowInInspector, ReadOnly]
-    private Places currentPlace = Places.inDeck;
+    private Places currentPlace = Places.Deck;
     [ShowInInspector, ReadOnly]
     private States currentState = States.resting;
     
@@ -86,7 +86,7 @@ public class Card : MonoBehaviour
     void OnMouseDown()
     {
         if(currentState != States.hovering) return;
-        if (currentPlace == Places.onBattlefield) return;
+        if (currentPlace == Places.Battlefield) return;
         currentState = States.dragged;
         
         startPosition = transform.position;
@@ -100,7 +100,7 @@ public class Card : MonoBehaviour
     void OnMouseDrag() 
     {
         if(currentState != States.dragged) return;
-        if (currentPlace == Places.onBattlefield) return;
+        if (currentPlace == Places.Battlefield) return;
         
         // Move card with mouse while maintaining offset
         transform.position = GetMouseWorldPosition() + dragOffset;
@@ -109,7 +109,7 @@ public class Card : MonoBehaviour
     void OnMouseUp()
     {   
         if(currentState != States.dragged) return;
-        if (currentPlace == Places.onBattlefield) return;
+        if (currentPlace == Places.Battlefield) return;
         
         // Check for Battlefield
         // Create a layerMask that ONLY includes the Battlefield layer
@@ -137,7 +137,7 @@ public class Card : MonoBehaviour
                 nextCardPos = BattlefieldManager.instance.GetBattlefieldPosition(1);
             }
             
-            MoveCard(nextCardPos, 1);
+            MoveCard(nextCardPos, Places.Battlefield);
             
 
         }
@@ -149,9 +149,8 @@ public class Card : MonoBehaviour
         
     }
 
-    public void MoveCard(Vector3 targetPosition, int targetPlace)
+    public void MoveCard(Vector3 targetPosition, Places targetPlace)
     {
-        // Targetplace 0 = toHand, 1 = toBattlefield
         currentState = States.moving;
         
         if (hoverScaleTween != null) transform.DOKill(true);
@@ -164,14 +163,14 @@ public class Card : MonoBehaviour
                 
                 switch (targetPlace)
                 {
-                    case 0: // ToHand
-                        currentPlace = Places.inHand;
+                    case Places.Hand: // ToHand
+                        currentPlace = Places.Hand;
                         
                         cardCanvas.sortingOrder = originalSortingOrder;
                         break;
                     
-                    case 1: // ToBattlefield
-                        currentPlace = Places.onBattlefield;
+                    case Places.Battlefield: // ToBattlefield
+                        currentPlace = Places.Battlefield;
                         
                         cardCanvas.sortingOrder = originalSortingOrder;
                         BattlefieldManager.instance.NewCardOnBattlefield(gameObject);

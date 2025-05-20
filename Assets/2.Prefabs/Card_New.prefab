@@ -122,7 +122,7 @@ GameObject:
   - component: {fileID: 6370332204112631408}
   - component: {fileID: 2212939186818708604}
   - component: {fileID: 7072635524517289997}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Card_New
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -210,10 +210,15 @@ MonoBehaviour:
   baseEndurance: 0
   characterClass: 0
   characterTribe: 0
+  characterPassive: 0
   characterEffect: 0
-  buffValue: 0
   buffTarget: 0
-  randomAmount: 0
+  buffAmount: 1
+  drawAmount: 1
+  gadget: 0
+  tinkerTarget: 0
+  repeat: 0
+  repeatAmount: 1
   titleText: {fileID: 3638719558074933604}
   powerText: {fileID: 5072241531180637324}
   effectText: {fileID: 3356558059926823018}
