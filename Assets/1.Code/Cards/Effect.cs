@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using VInspector;
@@ -25,17 +26,26 @@ public class Effect : MonoBehaviour
     
     //If Tinker
     [ShowIf("cardEffect", CardEffectTypes.Tinker)] 
-    [SerializeField] private GadgetTypes gadget = GadgetTypes.Bomb;
-    [SerializeField] private GadgetTargets tinkerTarget = GadgetTargets.Right;
+    [SerializeField] private GadgetTypes gadget = GadgetTypes.None;
+    [SerializeField] private GadgetTargets gadgetTarget = GadgetTargets.None;
     [EndIf]
     [Space]
     // Repeat
     [SerializeField] private bool repeat;
     [ShowIf("repeat")] 
     [SerializeField] private int repeatCount;
+
     [EndIf]
-    
-   
+    private void Awake()
+    {
+        if (!repeat) repeatCount = 0;
+        if (cardEffect != CardEffectTypes.Tinker)
+        {
+            gadget = GadgetTypes.None;
+            gadgetTarget = GadgetTargets.None;
+        }
+    }
+
     void Start()
     {
         switch (cardEffect)
@@ -50,19 +60,35 @@ public class Effect : MonoBehaviour
                 cardEffectTarget = CardEffectTargets.None;
                 break;
             
+            case CardEffectTypes.Tinker:
+                effectStrength = 0;
+                cardEffectTarget = CardEffectTargets.None;
+                break;
+            
         }
     }
 
     public IEnumerator DoEffect(int boardID)
     {
-        yield return new WaitForSeconds(1f);
+        GameObject targetCard = null;
+        
+        for (int i = 0; i <= repeatCount; i++)
+        {
+            if (cardEffectTarget != CardEffectTargets.None)
+            {
+                targetCard = BattleManager.instance.GetCardTarget(cardEffectTarget, boardID);
+            }
+            
+            yield return StartCoroutine
+                (CardEffects.DoEffect(cardEffect, targetCard, effectStrength, gadget, gadgetTarget));
+        }
     }
 
     //This is called by the Card component
     public string GetCardEffectText()
     {
         string cardEffectText = CardEffectText.
-            GetCardEffectText(cardEffect, cardEffectTarget, effectStrength, repeatCount);
+            GetCardEffectText(cardEffect, cardEffectTarget, effectStrength, repeatCount, gadget, gadgetTarget);
         return cardEffectText;
     }
     

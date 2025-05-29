@@ -6,6 +6,7 @@ using DG.Tweening;
 using UnityEngine;
 using VInspector;
 using Random = UnityEngine.Random;
+using Game.CardEffects;
 
 public class BattleManager : MonoBehaviour
 {
@@ -15,19 +16,6 @@ public class BattleManager : MonoBehaviour
     public Transform handCardHolder;
     public Transform deckCardHolder;
     public Transform arenaCardHolder;
-    
-    private enum CardTargets
-    {
-        Random,
-        Self,
-        Right,
-        Left,
-        All,
-        DeckRandom,
-        DeckAll,
-        HandRandom,
-        HandAll
-    }
     
     private void Awake()
     {
@@ -39,28 +27,27 @@ public class BattleManager : MonoBehaviour
         
     }
 
-    public GameObject GetCardTarget(int targetID, int resolverBoardID)
+    public GameObject GetCardTarget(CardEffectTargets effectTarget, int resolverBoardID)
     {
-        GameObject target = null;
-        CardTargets targetType = (CardTargets)targetID;
+        GameObject targetCard = null;
 
         int randomTarget;
 
-        switch (targetType)
+        switch (effectTarget)
         {
-            case CardTargets.Random:
+            case CardEffectTargets.Random:
                 randomTarget = Random.Range(0, arenaCardHolder.childCount);
-                target = arenaCardHolder.GetChild(randomTarget).gameObject;
+                targetCard = arenaCardHolder.GetChild(randomTarget).gameObject;
                 break;
-            case CardTargets.Self:
-                target = handCardHolder.GetChild(resolverBoardID).gameObject;
+            case CardEffectTargets.Self:
+                targetCard = handCardHolder.GetChild(resolverBoardID).gameObject;
                 break;
-            case CardTargets.Right:
+            case CardEffectTargets.Right:
                 if (resolverBoardID + 1 == arenaCardHolder.childCount) break; //Checks if the resolved card is not the most-right
-                target = arenaCardHolder.GetChild(resolverBoardID + 1).gameObject;
+                targetCard = arenaCardHolder.GetChild(resolverBoardID + 1).gameObject;
                 break;
         }
-        return target;
+        return targetCard;
     }
 
 }

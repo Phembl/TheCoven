@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
@@ -45,6 +46,7 @@ public class Card : MonoBehaviour
     private CardStates currentState = CardStates.resting;
     
     private int originalSortingOrder;
+    private Coroutine resetOrderCoroutine;
     
     //Object variables
     private Canvas cardCanvas;
@@ -64,10 +66,14 @@ public class Card : MonoBehaviour
         
         currentState = CardStates.hovering;
         
-        originalSortingOrder = cardCanvas.sortingOrder;
+        if(resetOrderCoroutine == null) originalSortingOrder = cardCanvas.sortingOrder;
+        else StopCoroutine(resetOrderCoroutine);
+
         cardCanvas.sortingOrder = ORDER_HOVERING;
+
+        if (hoverScaleTween != null) hoverScaleTween.Kill();
+       
         
-        if (hoverScaleTween != null) transform.DOKill(true);
         hoverScaleTween = transform.DOScale(scalePercent, scaleTweenTime).SetEase(Ease.OutQuad);
     }
 
@@ -77,10 +83,13 @@ public class Card : MonoBehaviour
 
         currentState = CardStates.resting;
         
-        cardCanvas.sortingOrder = originalSortingOrder;
+        //cardCanvas.sortingOrder = originalSortingOrder;
+        cardCanvas.sortingOrder = ORDER_HOVERING - (transform.GetSiblingIndex() + 1);
         
         if (hoverScaleTween != null) transform.DOKill(true);
         hoverScaleTween = transform.DOScale(1, scaleTweenTime).SetEase(Ease.OutQuad);
+        resetOrderCoroutine = StartCoroutine(ResetOrder(scaleTweenTime));
+
     }
  
     void OnMouseDown()
@@ -212,6 +221,12 @@ public class Card : MonoBehaviour
         float duration = Mathf.Lerp(minDuration, maxDuration, normalizedValue);
     
         return duration;
+    }
+
+    private IEnumerator ResetOrder(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        cardCanvas.sortingOrder = originalSortingOrder;
     }
     
 }

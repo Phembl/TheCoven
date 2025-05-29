@@ -30,6 +30,7 @@ namespace Game.CardEffects
     
     public enum GadgetTargets
     {
+        None,
         Random,
         Right,
         Left,
@@ -39,6 +40,7 @@ namespace Game.CardEffects
     
     public enum GadgetTypes
     {
+        None,
         Bomb,
         Placeholder
     }

@@ -24,7 +24,7 @@ public class Character : MonoBehaviour
     [SerializeField] private int basePower;
     [SerializeField] private int baseEndurance;
     [Space] 
-    [SerializeField] private Houses characterTribe = Houses.Cyber;
+    [SerializeField] private Houses characterHouse = Houses.Cyber;
     [Space]
     [SerializeField] private Classes characterClass1 = Classes.None;
     [SerializeField] private Classes characterClass2 = Classes.None;
@@ -37,6 +37,7 @@ public class Character : MonoBehaviour
     public TextMeshProUGUI effectText;
     public Image cardImage;
     public Image effectTextbox;
+    public Image cardBackground;
     [EndTab]
     
     //Enums
@@ -57,7 +58,10 @@ public class Character : MonoBehaviour
     private enum Houses
     {
         Cyber,
-        Beast
+        Beast,
+        Ying,
+        Downer,
+        Sludge
     }
     
     private enum Passives
@@ -105,6 +109,25 @@ public class Character : MonoBehaviour
             // Sets EffectText
             effectText.text = combinedEffectText;
             Debug.Log("CardEffectTexts:\n" + combinedEffectText.Trim());
+        }
+
+        switch (characterHouse)
+        {
+            case Houses.Cyber:
+                cardBackground.color = Color.black;
+                break;
+            case Houses.Beast:
+                cardBackground.color = Color.yellow;
+                break;
+            case Houses.Ying:
+                cardBackground.color = Color.red;
+                break;
+            case Houses.Downer:
+                cardBackground.color = Color.blue;
+                break;
+            case Houses.Sludge:
+                cardBackground.color = Color.green;
+                break;
         }
     }
     

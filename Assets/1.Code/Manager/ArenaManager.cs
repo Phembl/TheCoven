@@ -116,20 +116,24 @@ public class ArenaManager : MonoBehaviour
             nextCard.DOScale(1.2f, animationScaleSpeed);
             yield return new WaitForSeconds(animationScaleSpeed + 0.2f);
             
-            //THAT MUST BE CHANGED SO THAT IT TARGETS CARD COMP
-            Effect nextCardEffect = nextCard.GetComponent<Effect>();
-            
-            if (nextCardEffect != null)
+            // Get all Effect components on the next Card and resolves them
+            Effect[] nextCardEffects = nextCard.GetComponents<Effect>();
+            if (nextCardEffects.Length > 0)
             {
                 int boardID = nextCard.transform.GetSiblingIndex();
-                yield return StartCoroutine(nextCardEffect.DoEffect(boardID));
+                foreach (Effect effect in nextCardEffects)
+                {
+                    yield return StartCoroutine(effect.DoEffect(boardID));
+                    yield return new WaitForSeconds(1f);
+                }
+                
             }
             else
             {
                 Debug.Log("No effect");
+                yield return new WaitForSeconds(1f);
             }
             
-            yield return new WaitForSeconds(1f);
             
             //Finish Up Card
             nextCardCanvas.sortingOrder = nextCardOriginalSortingOrder;

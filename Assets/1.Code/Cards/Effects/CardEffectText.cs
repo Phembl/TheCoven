@@ -4,8 +4,16 @@ namespace Game.CardEffects
 {
     public static class CardEffectText
     {
-        public static string GetCardEffectText(CardEffectTypes effectType, CardEffectTargets effectTarget, int effectStrength,
-            int repeatCount)
+        public static string GetCardEffectText
+            (
+            CardEffectTypes effectType, 
+            CardEffectTargets effectTarget, 
+            int effectStrength,
+            int repeatCount,
+            GadgetTypes gadgetType,
+            GadgetTargets gadgetTarget
+            )
+        
         {
             string cardEffectFullText = "";
             string cardEffectTargetText = "";
@@ -14,7 +22,10 @@ namespace Game.CardEffects
             if (effectTarget != CardEffectTargets.None)
                 cardEffectTargetText = ConstructCardEffectTargetText(effectTarget);
             
-            string cardEffectText = ConstructEffectText(effectType, cardEffectTargetText, effectStrength);
+            if (gadgetTarget != GadgetTargets.None)
+                cardEffectTargetText =  ConstructGadgetTargetText(gadgetTarget);
+            
+            string cardEffectText = ConstructEffectText(effectType, cardEffectTargetText, effectStrength, gadgetType);
             
             if (repeatCount > 0)
                 cardEffectRepeatText = ConstructRepeatText(repeatCount);
@@ -75,7 +86,36 @@ namespace Game.CardEffects
             return targetText;
         }
 
-        private static string ConstructEffectText(CardEffectTypes effectType, string targetText, int effectStrengh)
+        private static string ConstructGadgetTargetText(GadgetTargets gadgetTarget, bool startSentence = false)
+        {
+            string gadgetTargetText = "";
+
+            switch (gadgetTarget)
+            {
+                case GadgetTargets.Random:
+                    gadgetTargetText = startSentence ? "At a random position" : "at a random position";
+                    break;
+                
+                case GadgetTargets.Right:
+                    gadgetTargetText = startSentence ? "To the right of this card" : "to the right of this card";
+                    break;
+                
+                case GadgetTargets.Left:
+                    gadgetTargetText = startSentence ? "To the left of this card" : "to the left of this card";
+                    break;
+                
+                case GadgetTargets.FarRight:
+                    gadgetTargetText = startSentence ? "To the most right" : "to the most right";
+                    break;
+                
+                case GadgetTargets.FarLeft:
+                    gadgetTargetText = startSentence ? "To the most left" : "to the most left";
+                    break;
+            }
+
+            return gadgetTargetText;
+        }
+        private static string ConstructEffectText(CardEffectTypes effectType, string targetText, int effectStrengh, GadgetTypes gadgetType)
         {
             string effectText = "";
             
@@ -89,6 +129,11 @@ namespace Game.CardEffects
                 case CardEffectTypes.CardDraw:
                     effectText = 
                         $"Draw <color=green>{effectStrengh}</color> cards.";
+                    break;
+                
+                case CardEffectTypes.Tinker:
+                    effectText = 
+                        $"Create a <color=#FF8C00>{gadgetType}</color> {targetText}.";
                     break;
                 
                 default:

@@ -537,6 +537,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      propertyPath: characterHouse
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: characterTribe
       value: 1
       objectReference: {fileID: 0}
@@ -551,7 +555,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2045450306}
   m_SourcePrefab: {fileID: 100100000, guid: b79817622b24f492581d07d26e94e803, type: 3}
 --- !u!1 &46576496
 GameObject:
@@ -1354,6 +1361,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      propertyPath: characterHouse
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: characterTribe
       value: 1
       objectReference: {fileID: 0}
@@ -1943,6 +1954,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 274419292}
   m_CullTransparentMesh: 1
+--- !u!1 &281568998 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
+  m_PrefabInstance: {fileID: 1842071386}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &289886710
 GameObject:
   m_ObjectHideFlags: 0
@@ -3168,7 +3184,7 @@ Transform:
   m_GameObject: {fileID: 495231265}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1000, y: -1000, z: -1000}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3454,7 +3470,7 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: c49b497fdd598493894f5701899b9131, type: 3}
   basePower: 2
   baseEndurance: 1
-  characterTribe: 0
+  characterHouse: 0
   characterClass1: 0
   characterClass2: 0
   characterClass3: 0
@@ -3463,6 +3479,7 @@ MonoBehaviour:
   effectText: {fileID: 1616992105}
   cardImage: {fileID: 1358918132}
   effectTextbox: {fileID: 0}
+  cardBackground: {fileID: 0}
 --- !u!61 &520492363
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4850,6 +4867,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      propertyPath: characterHouse
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: characterTribe
       value: 1
       objectReference: {fileID: 0}
@@ -5768,7 +5789,7 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: c49b497fdd598493894f5701899b9131, type: 3}
   basePower: 2
   baseEndurance: 1
-  characterTribe: 0
+  characterHouse: 0
   characterClass1: 0
   characterClass2: 0
   characterClass3: 0
@@ -5777,6 +5798,7 @@ MonoBehaviour:
   effectText: {fileID: 1831327023}
   cardImage: {fileID: 274419294}
   effectTextbox: {fileID: 0}
+  cardBackground: {fileID: 0}
 --- !u!61 &863494363
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -6480,6 +6502,31 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &945850873 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
+  m_PrefabInstance: {fileID: 1510064868}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &945850877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945850873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f88b5d37ebef438eacfcd1e5557368b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardEffect: 4
+  buffTarget: 1
+  buffAmount: 1
+  drawAmount: 1
+  gadget: 1
+  gadgetTarget: 2
+  repeat: 0
+  repeatCount: 0
 --- !u!1 &962719248
 GameObject:
   m_ObjectHideFlags: 0
@@ -6716,7 +6763,7 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: c49b497fdd598493894f5701899b9131, type: 3}
   basePower: 2
   baseEndurance: 1
-  characterTribe: 0
+  characterHouse: 0
   characterClass1: 0
   characterClass2: 0
   characterClass3: 0
@@ -6725,6 +6772,7 @@ MonoBehaviour:
   effectText: {fileID: 600251843}
   cardImage: {fileID: 298563835}
   effectTextbox: {fileID: 0}
+  cardBackground: {fileID: 0}
 --- !u!61 &996092844
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7107,7 +7155,7 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: c49b497fdd598493894f5701899b9131, type: 3}
   basePower: 2
   baseEndurance: 1
-  characterTribe: 0
+  characterHouse: 0
   characterClass1: 0
   characterClass2: 0
   characterClass3: 0
@@ -7116,6 +7164,7 @@ MonoBehaviour:
   effectText: {fileID: 1642949783}
   cardImage: {fileID: 1419544424}
   effectTextbox: {fileID: 0}
+  cardBackground: {fileID: 0}
 --- !u!61 &1062774465
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7850,7 +7899,7 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: c49b497fdd598493894f5701899b9131, type: 3}
   basePower: 2
   baseEndurance: 1
-  characterTribe: 0
+  characterHouse: 0
   characterClass1: 0
   characterClass2: 0
   characterClass3: 0
@@ -7859,6 +7908,7 @@ MonoBehaviour:
   effectText: {fileID: 46576498}
   cardImage: {fileID: 729112236}
   effectTextbox: {fileID: 0}
+  cardBackground: {fileID: 0}
 --- !u!61 &1205832886
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -8646,7 +8696,7 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: c49b497fdd598493894f5701899b9131, type: 3}
   basePower: 2
   baseEndurance: 1
-  characterTribe: 0
+  characterHouse: 0
   characterClass1: 0
   characterClass2: 0
   characterClass3: 0
@@ -8655,6 +8705,7 @@ MonoBehaviour:
   effectText: {fileID: 22232711}
   cardImage: {fileID: 1883506199}
   effectTextbox: {fileID: 0}
+  cardBackground: {fileID: 0}
 --- !u!61 &1349468676
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -9101,7 +9152,7 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: c49b497fdd598493894f5701899b9131, type: 3}
   basePower: 2
   baseEndurance: 1
-  characterTribe: 0
+  characterHouse: 0
   characterClass1: 0
   characterClass2: 0
   characterClass3: 0
@@ -9110,6 +9161,7 @@ MonoBehaviour:
   effectText: {fileID: 1074096636}
   cardImage: {fileID: 444994256}
   effectTextbox: {fileID: 0}
+  cardBackground: {fileID: 0}
 --- !u!61 &1444377687
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -9721,7 +9773,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 945850877}
   m_SourcePrefab: {fileID: 100100000, guid: b79817622b24f492581d07d26e94e803, type: 3}
 --- !u!4 &1526449782 stripped
 Transform:
@@ -10578,6 +10633,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      propertyPath: characterHouse
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: characterTribe
       value: 1
       objectReference: {fileID: 0}
@@ -10920,7 +10979,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
   m_PrefabInstance: {fileID: 1764694158012172056}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1654100443
+--- !u!114 &1654100447
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10934,12 +10993,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardEffect: 2
   buffTarget: 3
-  buffAmount: 10
+  buffAmount: 2
   drawAmount: 1
   gadget: 0
-  tinkerTarget: 1
+  gadgetTarget: 2
   repeat: 0
-  repeatCount: 0
+  repeatCount: 1
 --- !u!1 &1660942090
 GameObject:
   m_ObjectHideFlags: 0
@@ -11611,7 +11670,7 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: c49b497fdd598493894f5701899b9131, type: 3}
   basePower: 2
   baseEndurance: 1
-  characterTribe: 0
+  characterHouse: 0
   characterClass1: 0
   characterClass2: 0
   characterClass3: 0
@@ -11620,6 +11679,7 @@ MonoBehaviour:
   effectText: {fileID: 1949654892}
   cardImage: {fileID: 2144387924}
   effectTextbox: {fileID: 0}
+  cardBackground: {fileID: 0}
 --- !u!61 &1756699776
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -12350,13 +12410,36 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1849612940}
   m_SourcePrefab: {fileID: 100100000, guid: b79817622b24f492581d07d26e94e803, type: 3}
 --- !u!4 &1849612936 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6370332204112631408, guid: b79817622b24f492581d07d26e94e803, type: 3}
   m_PrefabInstance: {fileID: 1842071386}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1849612940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 281568998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f88b5d37ebef438eacfcd1e5557368b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardEffect: 3
+  buffTarget: 1
+  buffAmount: 1
+  drawAmount: 2
+  gadget: 0
+  gadgetTarget: 2
+  repeat: 0
+  repeatCount: 0
 --- !u!1 &1853793807
 GameObject:
   m_ObjectHideFlags: 0
@@ -12953,6 +13036,10 @@ PrefabInstance:
     - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: characterClass
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      propertyPath: characterHouse
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: characterTribe
@@ -14090,6 +14177,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2040718476}
   m_CullTransparentMesh: 1
+--- !u!1 &2045450302 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
+  m_PrefabInstance: {fileID: 33519881}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2045450306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045450302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f88b5d37ebef438eacfcd1e5557368b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardEffect: 2
+  buffTarget: 1
+  buffAmount: 1
+  drawAmount: 1
+  gadget: 0
+  gadgetTarget: 2
+  repeat: 1
+  repeatCount: 3
 --- !u!1 &2068628935
 GameObject:
   m_ObjectHideFlags: 0
@@ -14931,7 +15043,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1654100443}
+      addedObject: {fileID: 1654100447}
   m_SourcePrefab: {fileID: 100100000, guid: b79817622b24f492581d07d26e94e803, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
