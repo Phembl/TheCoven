@@ -1,73 +1,77 @@
 using System.Collections;
 using UnityEngine;
+using VInspector;
+using Game.CardEffects;
 
-public abstract class Effect : MonoBehaviour
+public class Effect : MonoBehaviour
 {
-    public int strength;
-    public int repeatCount;
-    public int targetID;
+    private int effectStrength;
+    private int gadgetID;
+    private CardEffectTargets cardEffectTarget;
+    
+    [Header("Effect Settings")]
+    [Tooltip("The type of effect this card has.")]
+    [SerializeField] private CardEffectTypes cardEffect = CardEffectTypes.None;
+    
+    //If Buff
+    [ShowIf("cardEffect", CardEffectTypes.Buff)] 
+    [SerializeField] private CardEffectTargets buffTarget = CardEffectTargets.Random;
+    [SerializeField] private int buffAmount = 1;
+    
+    //If Carddraw
+    [ShowIf("cardEffect", CardEffectTypes.CardDraw)] 
+    [SerializeField] private int drawAmount = 1;
+    [EndIf]
+    
+    //If Tinker
+    [ShowIf("cardEffect", CardEffectTypes.Tinker)] 
+    [SerializeField] private GadgetTypes gadget = GadgetTypes.Bomb;
+    [SerializeField] private GadgetTargets tinkerTarget = GadgetTargets.Right;
+    [EndIf]
+    [Space]
+    // Repeat
+    [SerializeField] private bool repeat;
+    [ShowIf("repeat")] 
+    [SerializeField] private int repeatCount;
+    [EndIf]
+    
    
-    protected virtual void Start()
+    void Start()
     {
-        
+        switch (cardEffect)
+        {
+            case CardEffectTypes.Buff:
+                effectStrength = buffAmount;
+                cardEffectTarget = buffTarget;
+                break;
+            
+            case CardEffectTypes.CardDraw:
+                effectStrength = drawAmount;
+                cardEffectTarget = CardEffectTargets.None;
+                break;
+            
+        }
+    }
+
+    public IEnumerator DoEffect(int boardID)
+    {
+        yield return new WaitForSeconds(1f);
+    }
+
+    //This is called by the Card component
+    public string GetCardEffectText()
+    {
+        string cardEffectText = CardEffectText.
+            GetCardEffectText(cardEffect, cardEffectTarget, effectStrength, repeatCount);
+        return cardEffectText;
     }
     
-    public abstract IEnumerator DoEffect(int boardID);
-
-    public abstract string GetEffectText();
-
-    protected string ConstructEffectTargetText(bool startSentence = false)
+    /*
+    protected string ConstructTinkerTargetText()
     {
-        int randomAmount = repeatCount + 1;
-        string effectTargetText = "";
-
-        switch (targetID)
-        {
-            case 0: // Random
-                if (randomAmount == 1) effectTargetText = startSentence ? "A random card in the arena" : "a random card in the arena";
-                else effectTargetText = $"{randomAmount} random cards in the arena";
-                break;
-            
-            case 1: //Self
-                effectTargetText = startSentence ? "This card" : "this card";
-                break;
-            
-            case 2: //Right
-                effectTargetText = startSentence ? "The card to the right" : "the card to the right";
-                break;
-            
-            case 3: //Left
-                effectTargetText = startSentence ? "The card to the left" : "the card to the left";
-                break;
-            
-            case 4: //All cards
-                effectTargetText = startSentence ? "All cards in the arena" : "all cards in the arena";
-                break;
-            
-            case 5: //Deck Random
-                if (randomAmount == 1) effectTargetText = startSentence ? "A random card in the deck" : "a random card in the deck";
-                else effectTargetText = $"{randomAmount} random cards in the deck";
-                break;
-            
-            case 6: //Deck All
-                effectTargetText = startSentence ? "All cards in the deck" : "all cards in the deck";
-                break;
-            
-            case 7: //Hand random
-                if (randomAmount == 1) effectTargetText = startSentence ? "A random card in hand" : "a random card in hand";
-                else effectTargetText = $"{randomAmount} random cards in hand";
-                break;
-            
-            case 8: //Hand All
-                effectTargetText = startSentence ? "All cards in hand" : "all cards in hand";
-                break;
-               
-            
-            default:
-                effectTargetText = "<color=red>PLACEHOLDER</color>";
-                break;
-        }
-
+        string effectTargetText = ""; 
+        
         return effectTargetText;
     }
+    */
 }

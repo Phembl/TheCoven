@@ -116,6 +116,7 @@ public class ArenaManager : MonoBehaviour
             nextCard.DOScale(1.2f, animationScaleSpeed);
             yield return new WaitForSeconds(animationScaleSpeed + 0.2f);
             
+            //THAT MUST BE CHANGED SO THAT IT TARGETS CARD COMP
             Effect nextCardEffect = nextCard.GetComponent<Effect>();
             
             if (nextCardEffect != null)

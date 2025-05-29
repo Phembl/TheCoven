@@ -25,14 +25,14 @@ public class Card : MonoBehaviour
     private Vector3 dragOffset;
     
     //State tracking variable
-    public enum Places
+    public enum CardPlaces
     {
         Deck,
         Hand,
         Battlefield,
         Exhaust
     }
-    private enum States
+    private enum CardStates
     {
         resting,
         hovering,
@@ -40,9 +40,9 @@ public class Card : MonoBehaviour
         moving
     }
     [ShowInInspector, ReadOnly]
-    private Places currentPlace = Places.Deck;
+    private CardPlaces currentPlace = CardPlaces.Deck;
     [ShowInInspector, ReadOnly]
-    private States currentState = States.resting;
+    private CardStates currentState = CardStates.resting;
     
     private int originalSortingOrder;
     
@@ -52,7 +52,7 @@ public class Card : MonoBehaviour
     private Camera cam;
 
 
-    protected virtual void Start()
+    void Awake()
     {
         cardCanvas = transform.GetChild(0).GetComponent<Canvas>();
         cam = Camera.main;
@@ -60,9 +60,9 @@ public class Card : MonoBehaviour
     
     void OnMouseEnter()
     {
-        if(currentState != States.resting) return;
+        if(currentState != CardStates.resting) return;
         
-        currentState = States.hovering;
+        currentState = CardStates.hovering;
         
         originalSortingOrder = cardCanvas.sortingOrder;
         cardCanvas.sortingOrder = ORDER_HOVERING;
@@ -73,9 +73,9 @@ public class Card : MonoBehaviour
 
     void OnMouseExit()
     {
-        if(currentState != States.hovering) return;
+        if(currentState != CardStates.hovering) return;
 
-        currentState = States.resting;
+        currentState = CardStates.resting;
         
         cardCanvas.sortingOrder = originalSortingOrder;
         
@@ -85,9 +85,9 @@ public class Card : MonoBehaviour
  
     void OnMouseDown()
     {
-        if(currentState != States.hovering) return;
-        if (currentPlace == Places.Battlefield) return;
-        currentState = States.dragged;
+        if(currentState != CardStates.hovering) return;
+        if (currentPlace == CardPlaces.Battlefield) return;
+        currentState = CardStates.dragged;
         
         startPosition = transform.position;
         cardCanvas.sortingOrder = ORDER_DRAGGING;
@@ -99,8 +99,8 @@ public class Card : MonoBehaviour
     
     void OnMouseDrag() 
     {
-        if(currentState != States.dragged) return;
-        if (currentPlace == Places.Battlefield) return;
+        if(currentState != CardStates.dragged) return;
+        if (currentPlace == CardPlaces.Battlefield) return;
         
         // Move card with mouse while maintaining offset
         transform.position = GetMouseWorldPosition() + dragOffset;
@@ -108,8 +108,8 @@ public class Card : MonoBehaviour
 
     void OnMouseUp()
     {   
-        if(currentState != States.dragged) return;
-        if (currentPlace == Places.Battlefield) return;
+        if(currentState != CardStates.dragged) return;
+        if (currentPlace == CardPlaces.Battlefield) return;
         
         // Check for Battlefield
         // Create a layerMask that ONLY includes the Battlefield layer
@@ -137,7 +137,7 @@ public class Card : MonoBehaviour
                 nextCardPos = ArenaManager.instance.GetBattlefieldPosition(1);
             }
             
-            MoveCard(nextCardPos, Places.Battlefield);
+            MoveCard(nextCardPos, CardPlaces.Battlefield);
             
 
         }
@@ -149,9 +149,9 @@ public class Card : MonoBehaviour
         
     }
 
-    public void MoveCard(Vector3 targetPosition, Places targetPlace)
+    public void MoveCard(Vector3 targetPosition, CardPlaces targetPlace)
     {
-        currentState = States.moving;
+        currentState = CardStates.moving;
         
         if (hoverScaleTween != null) transform.DOKill(true);
         if (transform.localScale.x != 1) transform.DOScale(1f, scaleTweenTime).SetEase(Ease.OutQuad);
@@ -159,18 +159,18 @@ public class Card : MonoBehaviour
         transform.DOMove(targetPosition, CalculateMoveDuration(targetPosition)).SetEase(Ease.OutQuad)
             .OnComplete(() =>
             {
-                currentState = States.resting;
+                currentState = CardStates.resting;
                 
                 switch (targetPlace)
                 {
-                    case Places.Hand: // ToHand
-                        currentPlace = Places.Hand;
+                    case CardPlaces.Hand: // ToHand
+                        currentPlace = CardPlaces.Hand;
                         
                         cardCanvas.sortingOrder = originalSortingOrder;
                         break;
                     
-                    case Places.Battlefield: // ToBattlefield
-                        currentPlace = Places.Battlefield;
+                    case CardPlaces.Battlefield: // ToBattlefield
+                        currentPlace = CardPlaces.Battlefield;
                         
                         cardCanvas.sortingOrder = originalSortingOrder;
                         ArenaManager.instance.NewCardOnBattlefield(gameObject);

@@ -4,12 +4,17 @@ using UnityEngine.UI;
 using VInspector;
 using DG.Tweening;
 
-public class Character : Card
+public class Character : MonoBehaviour
 {
+    //Values
     private int currentPower;
+    
+    //Effect
     private int effectStrength;
     private int effectTargetID;
+    private int effectGadgetID;
     
+    //Editor
     [Tab("Properties")]
     [Header("Character Values")]
     [SerializeField] private int ID;
@@ -19,39 +24,11 @@ public class Character : Card
     [SerializeField] private int basePower;
     [SerializeField] private int baseEndurance;
     [Space] 
-    [SerializeField] private Class characterClass = Class.Brawler;
-    [SerializeField] private Tribe characterTribe = Tribe.Cyber;
-    [EndTab]
-    
-    [Tab("Effect")]
-    [Header("Effect Settings")]
-    [SerializeField] private Passive characterPassive = Passive.None;
-    
-    [Tooltip("The type of effect this character card has.")]
-    [SerializeField] private EffectType characterEffect = EffectType.None;
-    
-    //If Buff
-    [ShowIf("characterEffect", EffectType.Buff)] 
-    [SerializeField] private CardTargets buffTarget = CardTargets.Random;
-    [SerializeField] private int buffAmount = 1;
-    
-    //If Carddraw
-    [ShowIf("characterEffect", EffectType.CardDraw)] 
-    [SerializeField] private int drawAmount = 1;
-    [EndIf]
-    
-    //If Tinker
-    [ShowIf("characterEffect", EffectType.Tinker)] 
-    [SerializeField] private Gadgets gadget = Gadgets.Bomb;
-    [SerializeField] private SummonTargets tinkerTarget = SummonTargets.Right;
-    [EndIf]
-    
-    // Repeat
-    [SerializeField] private bool repeat;
-    [ShowIf("repeat")] 
-    [SerializeField] private int repeatCount = 1;
-    [EndIf]
-    
+    [SerializeField] private Houses characterTribe = Houses.Cyber;
+    [Space]
+    [SerializeField] private Classes characterClass1 = Classes.None;
+    [SerializeField] private Classes characterClass2 = Classes.None;
+    [SerializeField] private Classes characterClass3 = Classes.None;
     [EndTab]
 
     [Tab("References")]
@@ -63,8 +40,9 @@ public class Character : Card
     [EndTab]
     
     //Enums
-    private enum Class
+    private enum Classes
     {
+        None,
         Brawler,
         Medic,
         Soldier,
@@ -76,60 +54,21 @@ public class Character : Card
         Hexxe
     }
 
-    private enum Tribe
+    private enum Houses
     {
         Cyber,
         Beast
     }
-    private enum EffectType
-    {
-        None,       
-        Individual,
-        Buff,
-        CardDraw,
-        Tinker,
-        Augment,
-        Hex
-    }
-
-    private enum Passive
+    
+    private enum Passives
     {
         None,
         Stealth,
         Slick
     }
-
-    private enum CardTargets
-    {
-        Random,
-        Self,
-        Right,
-        Left,
-        All,
-        DeckRandom,
-        DeckAll,
-        HandRandom,
-        HandAll
-    }
-
-    private enum SummonTargets
-    {
-        Right,
-        Left,
-        Random
-    }
-
-    private enum Gadgets
-    {
-        Bomb,
-        Placeholder
-    }
     
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    protected override void Start()
+    protected void Start()
     {
-        base.Start(); // Runs Start in base class
         currentPower = basePower;
         InitializeCard();
     }
@@ -145,53 +84,30 @@ public class Character : Card
         titleText.text = title; //Write card title
         cardImage.sprite = image; // Set image sprite
         powerText.text = currentPower.ToString(); //Write Card Power
-
-        string newEffectText = "";
-        switch (characterEffect)
+        
+        //Checks for effects
+        Effect[] cardEffects = GetComponents<Effect>();
+        if (cardEffects.Length == 0)
         {
-            case EffectType.None: 
-                effectText.text = "";
-                effectTextbox.rectTransform.sizeDelta = new Vector2(effectTextbox.rectTransform.sizeDelta.x, 45f);
-                titleText.rectTransform.position = new Vector2(titleText.rectTransform.position.x, -225);
-                break;
-            case EffectType.Individual:
-                break;
-            case EffectType.Buff:
-                Effect_Buff effectBuffComponent = gameObject.AddComponent<Effect_Buff>();
-                effectStrength = buffAmount;
-                effectTargetID = (int)buffTarget;
-                break;
-            case EffectType.CardDraw:
-                Effect_CardDraw effectCardDrawComponent = gameObject.AddComponent<Effect_CardDraw>();
-                effectStrength = drawAmount;
-                effectTargetID = 99; // Irrelevant
-                break;
-            default:
-                break;
-                
+            //Removes Effect textbox if there is no effect
+            effectText.text = "";
+            effectTextbox.rectTransform.sizeDelta = new Vector2(effectTextbox.rectTransform.sizeDelta.x, 45f);
+            titleText.rectTransform.position = new Vector2(titleText.rectTransform.position.x, -225);
         }
-
-        if (characterEffect != EffectType.None)
+        else
         {
-            Effect effectComponent = gameObject.GetComponent<Effect>();
-            effectComponent.strength = effectStrength;
-            effectComponent.targetID = effectTargetID;
-        
-            if (!repeat) effectComponent.repeatCount = 0;
-            else effectComponent.repeatCount = repeatCount;
-        
-            newEffectText = effectComponent.GetEffectText();
-            effectText.text = newEffectText;
+            string combinedEffectText = "";
+            foreach (Effect effect in cardEffects)
+            {
+                combinedEffectText += effect.GetCardEffectText() + "\n";
+            }
+
+            // Sets EffectText
+            effectText.text = combinedEffectText;
+            Debug.Log("CardEffectTexts:\n" + combinedEffectText.Trim());
         }
-        
-
     }
-
-    void ConstructEffectText()
-    {
-        
-    }
-
+    
     public void UpdatePower(int powerToAdd)
     {
         currentPower += powerToAdd;

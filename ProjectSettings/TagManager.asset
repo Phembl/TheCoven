@@ -9,6 +9,8 @@ TagManager:
   - Picked
   - OnBattlefield
   - Battlefield
+  - Character
+  - Gadget
   layers:
   - Default
   - TransparentFX

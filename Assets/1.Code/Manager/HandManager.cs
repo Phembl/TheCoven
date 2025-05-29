@@ -3,6 +3,9 @@ using DG.Tweening;
 using UnityEngine;
 using VInspector;
 
+/// <summary>
+/// TO BE FILLED IN
+/// </summary>
 public class HandManager : MonoBehaviour
 {
     public static HandManager instance;

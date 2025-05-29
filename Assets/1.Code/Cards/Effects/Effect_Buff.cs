@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Effect_Buff : Effect
 {
-
+/*
     public override string GetEffectText()
     {
         string effectText = "";
@@ -31,4 +31,5 @@ public class Effect_Buff : Effect
  
         yield return null;
     }
+    */
 }
