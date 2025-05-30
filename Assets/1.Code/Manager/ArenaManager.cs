@@ -81,8 +81,6 @@ public class ArenaManager : MonoBehaviour
         Vector2 rayDirection = Vector2.right;
         int rayLayer = 1 << LayerMask.NameToLayer("Card");
         
-        Debug.Log(rayOrigin);
-        
         RaycastHit2D[] rayHits = Physics2D.RaycastAll(rayOrigin, rayDirection, 5000, rayLayer);
         
         //Set Card Sibling order to match Battlefield order

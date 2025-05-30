@@ -44,6 +44,17 @@ namespace Game.CardEffects
         Bomb,
         Placeholder
     }
+
+    public struct CardEffectData
+    {
+        public CardEffectTypes cardEffectType;
+        public CardEffectTargets cardEffectTarget;
+        public GadgetTypes gadgetType;
+        public GadgetTargets gadgetTarget;
+        public int cardEffectStrength;
+        public int cardEffectUserBoardID;
+        public int cardEffectRepeatCount;
+    }
     
 }
 

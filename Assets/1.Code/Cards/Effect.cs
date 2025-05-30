@@ -6,13 +6,13 @@ using Game.CardEffects;
 
 public class Effect : MonoBehaviour
 {
-    private int effectStrength;
-    private int gadgetID;
+    private int cardEffectStrength;
     private CardEffectTargets cardEffectTarget;
+    private CardEffectData cardEffectData;
     
     [Header("Effect Settings")]
     [Tooltip("The type of effect this card has.")]
-    [SerializeField] private CardEffectTypes cardEffect = CardEffectTypes.None;
+    [SerializeField] private CardEffectTypes cardEffectType = CardEffectTypes.None;
     
     //If Buff
     [ShowIf("cardEffect", CardEffectTypes.Buff)] 
@@ -26,7 +26,7 @@ public class Effect : MonoBehaviour
     
     //If Tinker
     [ShowIf("cardEffect", CardEffectTypes.Tinker)] 
-    [SerializeField] private GadgetTypes gadget = GadgetTypes.None;
+    [SerializeField] private GadgetTypes gadgetType = GadgetTypes.None;
     [SerializeField] private GadgetTargets gadgetTarget = GadgetTargets.None;
     [EndIf]
     [Space]
@@ -39,48 +39,60 @@ public class Effect : MonoBehaviour
     private void Awake()
     {
         if (!repeat) repeatCount = 0;
-        if (cardEffect != CardEffectTypes.Tinker)
+        if (cardEffectType != CardEffectTypes.Tinker)
         {
-            gadget = GadgetTypes.None;
+            gadgetType = GadgetTypes.None;
             gadgetTarget = GadgetTargets.None;
         }
     }
 
     void Start()
     {
-        switch (cardEffect)
+        switch (cardEffectType)
         {
             case CardEffectTypes.Buff:
-                effectStrength = buffAmount;
+                cardEffectStrength = buffAmount;
                 cardEffectTarget = buffTarget;
                 break;
             
             case CardEffectTypes.CardDraw:
-                effectStrength = drawAmount;
+                cardEffectStrength = drawAmount;
                 cardEffectTarget = CardEffectTargets.None;
                 break;
             
             case CardEffectTypes.Tinker:
-                effectStrength = 0;
+                cardEffectStrength = 0;
                 cardEffectTarget = CardEffectTargets.None;
                 break;
             
         }
+        
+        ConstructEffectData();
+    }
+
+    private void ConstructEffectData()
+    {
+        cardEffectData = new CardEffectData
+        {
+            cardEffectType = this.cardEffectType,
+            cardEffectTarget = this.cardEffectTarget,
+            gadgetType = this.gadgetType,
+            gadgetTarget = this.gadgetTarget,
+            cardEffectStrength = this.cardEffectStrength,
+            cardEffectUserBoardID = 0,
+            cardEffectRepeatCount = repeatCount
+        };
     }
 
     public IEnumerator DoEffect(int boardID)
     {
-        GameObject targetCard = null;
+        cardEffectData.cardEffectUserBoardID = boardID;
         
         for (int i = 0; i <= repeatCount; i++)
         {
-            if (cardEffectTarget != CardEffectTargets.None)
-            {
-                targetCard = BattleManager.instance.GetCardTarget(cardEffectTarget, boardID);
-            }
             
             yield return StartCoroutine
-                (CardEffects.DoEffect(cardEffect, targetCard, effectStrength, gadget, gadgetTarget));
+                (CardEffects.DoEffect(cardEffectData));
         }
     }
 
@@ -88,7 +100,7 @@ public class Effect : MonoBehaviour
     public string GetCardEffectText()
     {
         string cardEffectText = CardEffectText.
-            GetCardEffectText(cardEffect, cardEffectTarget, effectStrength, repeatCount, gadget, gadgetTarget);
+            GetCardEffectText(cardEffectData);
         return cardEffectText;
     }
     

@@ -6,23 +6,28 @@ namespace Game.CardEffects
     public static class CardEffects
     {
         private static float waitAfterEffect = 0.2f;
-        public static IEnumerator DoEffect
-            (
-                CardEffectTypes effectType, 
-                GameObject targetCard, 
-                int effectStrength, 
-                GadgetTypes gadgetType, 
-                GadgetTargets gadgetTarget
-            )
+        public static IEnumerator DoEffect (CardEffectData cardEffectData)
         {
-            switch (effectType)
+            GameObject targetCard = null;
+            
+            //Find targetCard gameObject
+            if (cardEffectData.cardEffectTarget != CardEffectTargets.None)
+            {
+                targetCard = BattleManager.instance.GetCardTarget
+                    (
+                        cardEffectData.cardEffectTarget,
+                        cardEffectData.cardEffectUserBoardID
+                    );
+            }
+            
+            switch (cardEffectData.cardEffectType)
             {
                 case CardEffectTypes.Buff:
-                    yield return EffectBuff(targetCard, effectStrength);
+                    yield return EffectBuff(targetCard, cardEffectData.cardEffectStrength);
                     break;
                 
                 case CardEffectTypes.CardDraw:
-                    yield return EffectCardDraw(effectStrength);
+                    yield return EffectCardDraw(cardEffectData.cardEffectStrength);
                     break;
             }
             
@@ -40,6 +45,11 @@ namespace Game.CardEffects
         {
             Debug.Log($"Drawing {drawAmount} cards to hand.");
             HandManager.instance.DrawCards(drawAmount);
+            yield break;
+        }
+
+        private static IEnumerator EffectTinker(GameObject targetCard)
+        {
             yield break;
         }
         

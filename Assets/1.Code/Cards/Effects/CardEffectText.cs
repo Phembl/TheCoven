@@ -4,31 +4,28 @@ namespace Game.CardEffects
 {
     public static class CardEffectText
     {
-        public static string GetCardEffectText
-            (
-            CardEffectTypes effectType, 
-            CardEffectTargets effectTarget, 
-            int effectStrength,
-            int repeatCount,
-            GadgetTypes gadgetType,
-            GadgetTargets gadgetTarget
-            )
+        public static string GetCardEffectText (CardEffectData cardEffectData)
         
         {
             string cardEffectFullText = "";
             string cardEffectTargetText = "";
             string cardEffectRepeatText = "";
             
-            if (effectTarget != CardEffectTargets.None)
-                cardEffectTargetText = ConstructCardEffectTargetText(effectTarget);
+            if (cardEffectData.cardEffectTarget != CardEffectTargets.None)
+                cardEffectTargetText = ConstructCardEffectTargetText(cardEffectData.cardEffectTarget);
             
-            if (gadgetTarget != GadgetTargets.None)
-                cardEffectTargetText =  ConstructGadgetTargetText(gadgetTarget);
+            if (cardEffectData.gadgetTarget != GadgetTargets.None)
+                cardEffectTargetText =  ConstructGadgetTargetText(cardEffectData.gadgetTarget);
             
-            string cardEffectText = ConstructEffectText(effectType, cardEffectTargetText, effectStrength, gadgetType);
+            string cardEffectText = ConstructEffectText
+                (
+                    cardEffectData.cardEffectType, 
+                    cardEffectTargetText, 
+                    cardEffectData.cardEffectStrength, 
+                    cardEffectData.gadgetType);
             
-            if (repeatCount > 0)
-                cardEffectRepeatText = ConstructRepeatText(repeatCount);
+            if (cardEffectData.cardEffectRepeatCount > 0)
+                cardEffectRepeatText = ConstructRepeatText(cardEffectData.cardEffectRepeatCount);
             
             cardEffectFullText = cardEffectText + cardEffectRepeatText;
             return cardEffectFullText;
