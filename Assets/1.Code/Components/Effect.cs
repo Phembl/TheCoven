@@ -7,25 +7,26 @@ using Game.CardEffects;
 public class Effect : MonoBehaviour
 {
     private int cardEffectStrength;
+    private CardEffectTypes cardEffectType;
     private CardEffectTargets cardEffectTarget;
     private CardEffectData cardEffectData;
     
     [Header("Effect Settings")]
     [Tooltip("The type of effect this card has.")]
-    [SerializeField] private CardEffectTypes cardEffectType = CardEffectTypes.None;
+    [SerializeField] private CardEffectTypes effect = CardEffectTypes.None;
     
     //If Buff
-    [ShowIf("cardEffect", CardEffectTypes.Buff)] 
+    [ShowIf("effect", CardEffectTypes.Buff)] 
     [SerializeField] private CardEffectTargets buffTarget = CardEffectTargets.Random;
     [SerializeField] private int buffAmount = 1;
     
     //If Carddraw
-    [ShowIf("cardEffect", CardEffectTypes.CardDraw)] 
+    [ShowIf("effect", CardEffectTypes.CardDraw)] 
     [SerializeField] private int drawAmount = 1;
     [EndIf]
     
     //If Tinker
-    [ShowIf("cardEffect", CardEffectTypes.Tinker)] 
+    [ShowIf("effect", CardEffectTypes.Tinker)] 
     [SerializeField] private GadgetTypes gadgetType = GadgetTypes.None;
     [SerializeField] private GadgetTargets gadgetTarget = GadgetTargets.None;
     [EndIf]
@@ -48,6 +49,9 @@ public class Effect : MonoBehaviour
 
     void Start()
     {
+
+        cardEffectType = effect;
+        
         switch (cardEffectType)
         {
             case CardEffectTypes.Buff:

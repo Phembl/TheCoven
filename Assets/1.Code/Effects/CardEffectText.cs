@@ -124,8 +124,19 @@ namespace Game.CardEffects
                     break;
                 
                 case CardEffectTypes.CardDraw:
-                    effectText = 
-                        $"Draw <color=green>{effectStrengh}</color> cards.";
+                    if (effectStrengh > 1)
+                    {
+                        effectText = 
+                            $"Draw <color=green>{effectStrengh}</color> cards.";
+                    }
+
+                    else
+                    {
+                        effectText = 
+                            $"Draw <color=green>{effectStrengh}</color> card.";
+                    }
+
+                   
                     break;
                 
                 case CardEffectTypes.Tinker:

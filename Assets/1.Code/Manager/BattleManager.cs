@@ -7,47 +7,44 @@ using UnityEngine;
 using VInspector;
 using Random = UnityEngine.Random;
 using Game.CardEffects;
+using Game.Global;
 
 public class BattleManager : MonoBehaviour
 {
     public static BattleManager instance;
     
-    //Card Holders
+    [Tab("Hand")]
+    public float drawDuration = 0.5f; // Duration of draw animation
+    public float delayBetweenDraws = 0.1f; // Delay between consecutive draws
+    public int testCardsToDraw = 3;
+    
+    [Button("Draw Cards")]
+    public void TestDrawButton()
+    {
+        StartCoroutine(Utility.DrawCardsToHand(testCardsToDraw));
+    }
+    [EndTab] 
+    
+    [Tab("Settings")]
     public Transform handCardHolder;
     public Transform deckCardHolder;
     public Transform arenaCardHolder;
+    public Transform deckIcon;
+    [Space] 
+    public BoxCollider2D handBounds;
+    public BoxCollider2D arenaBounds;
+    [EndTab] 
     
     private void Awake()
     {
         if  (instance == null) instance = this;
     }
+    
+    
 
     private void Start()
     {
         
     }
-
-    public GameObject GetCardTarget(CardEffectTargets effectTarget, int resolverBoardID)
-    {
-        GameObject targetCard = null;
-
-        int randomTarget;
-
-        switch (effectTarget)
-        {
-            case CardEffectTargets.Random:
-                randomTarget = Random.Range(0, arenaCardHolder.childCount);
-                targetCard = arenaCardHolder.GetChild(randomTarget).gameObject;
-                break;
-            case CardEffectTargets.Self:
-                targetCard = handCardHolder.GetChild(resolverBoardID).gameObject;
-                break;
-            case CardEffectTargets.Right:
-                if (resolverBoardID + 1 == arenaCardHolder.childCount) break; //Checks if the resolved card is not the most-right
-                targetCard = arenaCardHolder.GetChild(resolverBoardID + 1).gameObject;
-                break;
-        }
-        return targetCard;
-    }
-
+    
 }

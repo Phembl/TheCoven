@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Game.Global;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,6 +13,7 @@ using VInspector;
 public class Card : MonoBehaviour
 
 {
+    
     //Order consts
     private const int ORDER_HOVERING = 1000;
     private const int ORDER_DRAGGING = 1500;
@@ -24,6 +26,8 @@ public class Card : MonoBehaviour
     //Dragging Variables
     private Vector3 startPosition;
     private Vector3 dragOffset;
+    
+    int arenalayerMask = (1 << 6);
     
     //State tracking variable
     public enum CardPlaces
@@ -72,7 +76,6 @@ public class Card : MonoBehaviour
         cardCanvas.sortingOrder = ORDER_HOVERING;
 
         if (hoverScaleTween != null) hoverScaleTween.Kill();
-       
         
         hoverScaleTween = transform.DOScale(scalePercent, scaleTweenTime).SetEase(Ease.OutQuad);
     }
@@ -120,17 +123,16 @@ public class Card : MonoBehaviour
         if(currentState != CardStates.dragged) return;
         if (currentPlace == CardPlaces.Battlefield) return;
         
-        // Check for Battlefield
-        // Create a layerMask that ONLY includes the Battlefield layer
-        int battlefieldLayer = LayerMask.NameToLayer("Battlefield");
-        int layerMask = (1 << battlefieldLayer);
+        currentState = CardStates.moving;
         
-        // Create a ray from the camera through the mouse position
+        if (hoverScaleTween != null) hoverScaleTween.Kill();
+        if (transform.localScale.x != 1) hoverScaleTween = transform.DOScale(1f, scaleTweenTime).SetEase(Ease.OutQuad);
+
+        
+        // Check for Arena Hit
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        RaycastHit2D rayHit = Physics2D.GetRayIntersection(ray, Mathf.Infinity, layerMask);
+        RaycastHit2D rayHit = Physics2D.GetRayIntersection(ray, Mathf.Infinity, arenalayerMask);
         
-        
-        // Check if the raycast hit
         if (rayHit)
         {
             Vector3 nextCardPos = new Vector3(0,0,0);
@@ -160,12 +162,9 @@ public class Card : MonoBehaviour
 
     public void MoveCard(Vector3 targetPosition, CardPlaces targetPlace)
     {
-        currentState = CardStates.moving;
         
-        if (hoverScaleTween != null) transform.DOKill(true);
-        if (transform.localScale.x != 1) transform.DOScale(1f, scaleTweenTime).SetEase(Ease.OutQuad);
-        
-        transform.DOMove(targetPosition, CalculateMoveDuration(targetPosition)).SetEase(Ease.OutQuad)
+       
+        transform.DOMove(targetPosition, Utility.CalculateCardMoveDuration(targetPosition, transform)).SetEase(Ease.OutQuad)
             .OnComplete(() =>
             {
                 currentState = CardStates.resting;
@@ -198,31 +197,6 @@ public class Card : MonoBehaviour
         return mousePos;
     }
     
-    public float CalculateMoveDuration(Vector3 targetPos)
-    {
-        // Get the distance between current position and target position
-        float distance = Vector3.Distance(transform.position, targetPos);
-    
-        // Define our min and max distances for interpolation
-        float minDistance = 10f;    
-        float maxDistance = 2000f;   
-    
-        // Define our min and max durations
-        float minDuration = 0.05f;
-        float maxDuration = 0.5f;
-    
-        // Clamp the distance to our defined range
-        float clampedDistance = Mathf.Clamp(distance, minDistance, maxDistance);
-    
-        // Calculate the normalized value (0 to 1) based on the distance
-        float normalizedValue = (clampedDistance - minDistance) / (maxDistance - minDistance);
-    
-        // Interpolate between min and max duration
-        float duration = Mathf.Lerp(minDuration, maxDuration, normalizedValue);
-    
-        return duration;
-    }
-
     private IEnumerator ResetOrder(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);

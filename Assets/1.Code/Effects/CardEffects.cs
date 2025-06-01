@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using Game.Global;
 
 namespace Game.CardEffects
 {
@@ -13,7 +14,8 @@ namespace Game.CardEffects
             //Find targetCard gameObject
             if (cardEffectData.cardEffectTarget != CardEffectTargets.None)
             {
-                targetCard = BattleManager.instance.GetCardTarget
+                //targetCard = BattleManager.instance.GetCardTarget
+                targetCard = Utility.GetCardEffectTarget
                     (
                         cardEffectData.cardEffectTarget,
                         cardEffectData.cardEffectUserBoardID
