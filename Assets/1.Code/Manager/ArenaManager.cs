@@ -35,7 +35,7 @@ public class ArenaManager : MonoBehaviour
         animationScaleSpeed *= speedMult;
         
     }
-    
+    /*
     // This is called by the cards to find their position on the battlefield when dropped
     public Vector3 GetBattlefieldPosition(int direction)
     {
@@ -70,6 +70,7 @@ public class ArenaManager : MonoBehaviour
         
         return newPosition;
     }
+   
 
     public void NewCardOnBattlefield(GameObject card)
     {
@@ -92,6 +93,8 @@ public class ArenaManager : MonoBehaviour
         }
         
     }
+    
+     */
 
     public void AttackButtonIsPressed()
     {

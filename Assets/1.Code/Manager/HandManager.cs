@@ -33,7 +33,7 @@ public class HandManager : MonoBehaviour
     [Button("Draw Cards")]
     public void Button()
     {
-        DrawCards(testCardsToDraw);
+        //DrawCards(testCardsToDraw);
     }
     
     private void Awake()
@@ -46,7 +46,7 @@ public class HandManager : MonoBehaviour
         handBounds = GetComponent<BoxCollider2D>();
         handWidth = handBounds.size.x;
     }
-
+/*
     public void DrawCards(int cardsToDraw)
     {
         Debug.Log($"Drawing {cardsToDraw} Cards");
@@ -203,4 +203,5 @@ public class HandManager : MonoBehaviour
             nextCard.transform.GetChild(0).GetComponent<Canvas>().sortingOrder = HAND_BASEORDER - i;
         }
     }
+    */
 }

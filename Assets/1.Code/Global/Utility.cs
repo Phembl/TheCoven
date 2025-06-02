@@ -1,24 +1,20 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Game.CardEffects;
 using DG.Tweening;
 
 namespace Game.Global
 {
-    public enum CardLocations
-    {
-        None,
-        Deck,
-        Hand,
-        Arena,
-        Exhaust
-    }
+
     
     public static class Utility
     { 
     //Constants
     private const float CARD_WIDTH = 400f;
     private const float HAND_CARDSPACING = 25f;
+    private const float ARENA_CARDSPACING= 25f;
     private const int HAND_ORDER_BASE = 500;
         
     //Card Container
@@ -31,6 +27,9 @@ namespace Game.Global
     private static float cardDrawDuration = BattleManager.instance.drawDuration;
     private static float cardDrawDelayBetweenCards = BattleManager.instance.delayBetweenDraws;
     private static BoxCollider2D handBounds = BattleManager.instance.handBounds;
+    
+    //Arena Settings
+    private static BoxCollider2D arenaBounds = BattleManager.instance.arenaBounds;
       
 #region ------------Card Effect Utils------------//
         
@@ -91,12 +90,11 @@ namespace Game.Global
             // Existing cards maintain their order but shift positions to make room
             for (int i = 0; i < cardsInHand; i++)
             {
-                Debug.Log($"Pushing Card {lastChildIndex - i} to position {newPositions[i]}");
                 Transform nextHandCard = handCardHolder.GetChild(0 + i); // Get next Handcard 
                 float nextHandCardMoveX = newPositions[(0 + i)]; // Get the correct X from newPositions list
                 Vector3 nextHandCardTarget = new Vector3(nextHandCardMoveX, nextHandCard.position.y, nextHandCard.position.z);
                 
-                nextHandCard.DOMove(nextHandCardTarget, cardDrawDelayBetweenCards).SetEase(Ease.OutQuint); // Move Card
+                nextHandCard.DOMove(nextHandCardTarget, cardDrawDuration).SetEase(Ease.OutQuint); // Move Card
             }
         }
 
@@ -110,16 +108,11 @@ namespace Game.Global
 
             // Set parent to hand container
             nextCard.SetParent(handCardHolder);
-            //nextCard.SetSiblingIndex(0);
-            //nextCard.transform.GetChild(0).GetComponent<Canvas>().sortingOrder = HAND_BASEORDER - 10 * i;
             UpdateHandOrder();
 
             // Move next card to deck button position to start animation
             nextCard.position = new Vector3(deckIcon.position.x, deckIcon.position.y, nextCard.position.z);
-
-            // For right-to-left drawing order of new cards:
-            // First card (i=0) gets rightmost new position (cardsToDraw-1)
-            // Last card gets leftmost new position (0)
+            
             int newCardPositionIndex = cardsInHand + i;
 
             // Calculate target position
@@ -172,6 +165,7 @@ namespace Game.Global
         return positions;
     }
     
+
     public static void UpdateHandPositions(bool animate = true)
     {
         // Get current number of cards in hand
@@ -201,13 +195,15 @@ namespace Game.Global
         UpdateHandOrder();
     } 
     
+    /// <summary>
+    /// This function sets the Z order and Sorting order of all cards in hand according to their sibling index.
+    /// </summary>
     private static void UpdateHandOrder()
     {
         for (int i = 0; i < handCardHolder.childCount; i++)
         {
             
             Transform nextCard = handCardHolder.GetChild(i);
-            nextCard.gameObject.name = "Card " + i;
             float nextCardZ = 0 + i;
             nextCard.transform.position = new Vector3(nextCard.transform.position.x, nextCard.transform.position.y, nextCardZ);
             nextCard.transform.GetChild(0).GetComponent<Canvas>().sortingOrder = HAND_ORDER_BASE - i;
@@ -242,7 +238,63 @@ namespace Game.Global
     }
 #endregion ---------------Card Utils----------//
     
-    
+#region ------------Arena Utils------------//
+
+public static Vector3 GetArenaCardPosition(int direction)
+{
+    float battlefieldYOffset = arenaBounds.offset.y;
+    float cardXOffset = CARD_WIDTH + ARENA_CARDSPACING;
+        
+    Vector3 newPosition = new Vector3(0, battlefieldYOffset, 0);
+        
+    int childCount = arenaCardHolder.childCount;
+    List<float> cardXPosition = new List<float>();
+        
+    if  (childCount > 0)
+    {
+        foreach (Transform child in arenaCardHolder)
+        {
+            float nextCardX = child.transform.position.x;
+            cardXPosition.Add(nextCardX);
+        }
+
+        if (direction > 0)
+        {
+            float newCardX = cardXPosition.Max() + cardXOffset;
+            newPosition.x = newCardX;
+                
+        }
+        else
+        {
+            float newCardX = cardXPosition.Min() - cardXOffset;
+            newPosition.x = newCardX;
+        }
+    }
+    return newPosition;
+}
+
+public static void AddCardToArena(GameObject card)
+{
+    //This is called from the card when it is dropped to the battlefield
+    card.transform.SetParent(arenaCardHolder);
+        
+    //Prepare Ray to check card order
+    Vector2 rayOrigin = new Vector2((((arenaBounds.size.x + 100) / 2) * -1), arenaBounds.offset.y);
+    Vector2 rayDirection = Vector2.right;
+    int rayLayer = 1 << LayerMask.NameToLayer("Card");
+        
+    RaycastHit2D[] rayHits = Physics2D.RaycastAll(rayOrigin, rayDirection, 5000, rayLayer);
+        
+    //Set Card Sibling order to match Battlefield order
+    int siblingIndex = 0;
+    foreach (RaycastHit2D hit in rayHits)
+    {
+        hit.transform.SetSiblingIndex(siblingIndex);
+        siblingIndex++;
+    }
+        
+}
+#endregion ------------Arena Utils----------//
     
     
     

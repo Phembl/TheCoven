@@ -33,18 +33,67 @@ public class BattleManager : MonoBehaviour
     [Space] 
     public BoxCollider2D handBounds;
     public BoxCollider2D arenaBounds;
-    [EndTab] 
+    [Space] 
+    public float resolveSpeed = 1f;
+
+    [EndTab] private float cardResolveScaleSpeed;
     
     private void Awake()
     {
         if  (instance == null) instance = this;
     }
-    
-    
 
     private void Start()
     {
-        
+        cardResolveScaleSpeed = resolveSpeed / 3;
     }
+    
+    public void ResolveButtonIsPressed()
+    {
+        StartCoroutine(ResolveBoard());
+    }
+    
+    private IEnumerator ResolveBoard() 
+    {
+        Debug.Log("Resolving board");
+
+        foreach (Transform nextCard in arenaCardHolder)
+        {
+            //Prepare Card
+            Canvas nextCardCanvas = nextCard.GetChild(0).GetComponent<Canvas>();
+            int nextCardOriginalSortingOrder = nextCardCanvas.sortingOrder;
+            
+            //Animate Card
+            nextCardCanvas.sortingOrder += 1000;
+            nextCard.DOScale(1.2f, (cardResolveScaleSpeed));
+            yield return new WaitForSeconds(cardResolveScaleSpeed + 0.2f);
+            
+            // Get all Effect components on the next Card and resolves them
+            Effect[] nextCardEffects = nextCard.GetComponents<Effect>();
+            if (nextCardEffects.Length > 0)
+            {
+                int boardID = nextCard.transform.GetSiblingIndex();
+                foreach (Effect effect in nextCardEffects)
+                {
+                    yield return StartCoroutine(effect.DoEffect(boardID));
+                    yield return new WaitForSeconds(1f);
+                }
+                
+            }
+            else
+            {
+                Debug.Log("No effect");
+                yield return new WaitForSeconds(0.5f);
+            }
+            
+            
+            //Finish Up Card
+            nextCardCanvas.sortingOrder = nextCardOriginalSortingOrder;
+            nextCard.DOScale(1f, cardResolveScaleSpeed);
+            yield return new WaitForSeconds(cardResolveScaleSpeed);
+        }
+    }
+    
+    
     
 }

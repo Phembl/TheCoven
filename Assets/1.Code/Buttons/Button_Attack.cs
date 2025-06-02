@@ -16,7 +16,7 @@ public class Button_Attack : MonoBehaviour
         {
             isInactive = true;
 
-            ArenaManager.instance.AttackButtonIsPressed();
+            BattleManager.instance.ResolveButtonIsPressed();
         }
     }
 }

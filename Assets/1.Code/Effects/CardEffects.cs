@@ -45,9 +45,8 @@ namespace Game.CardEffects
 
         private static IEnumerator EffectCardDraw(int drawAmount)
         {
-            Debug.Log($"Drawing {drawAmount} cards to hand.");
-            HandManager.instance.DrawCards(drawAmount);
-            yield break;
+            yield return Utility.DrawCardsToHand(drawAmount);
+            
         }
 
         private static IEnumerator EffectTinker(GameObject targetCard)

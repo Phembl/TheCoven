@@ -30,13 +30,15 @@ public class Card : MonoBehaviour
     int arenalayerMask = (1 << 6);
     
     //State tracking variable
-    public enum CardPlaces
+    public enum CardLocations
     {
+        None,
         Deck,
         Hand,
-        Battlefield,
+        Arena,
         Exhaust
     }
+    
     private enum CardStates
     {
         resting,
@@ -45,7 +47,7 @@ public class Card : MonoBehaviour
         moving
     }
     [ShowInInspector, ReadOnly]
-    private CardPlaces currentPlace = CardPlaces.Deck;
+    private CardLocations currentPlace = CardLocations.Deck;
     [ShowInInspector, ReadOnly]
     private CardStates currentState = CardStates.resting;
     
@@ -98,7 +100,7 @@ public class Card : MonoBehaviour
     void OnMouseDown()
     {
         if(currentState != CardStates.hovering) return;
-        if (currentPlace == CardPlaces.Battlefield) return;
+        if (currentPlace == CardLocations.Arena) return;
         currentState = CardStates.dragged;
         
         startPosition = transform.position;
@@ -112,7 +114,7 @@ public class Card : MonoBehaviour
     void OnMouseDrag() 
     {
         if(currentState != CardStates.dragged) return;
-        if (currentPlace == CardPlaces.Battlefield) return;
+        if (currentPlace == CardLocations.Arena) return;
         
         // Move card with mouse while maintaining offset
         transform.position = GetMouseWorldPosition() + dragOffset;
@@ -121,7 +123,7 @@ public class Card : MonoBehaviour
     void OnMouseUp()
     {   
         if(currentState != CardStates.dragged) return;
-        if (currentPlace == CardPlaces.Battlefield) return;
+        if (currentPlace == CardLocations.Arena) return;
         
         currentState = CardStates.moving;
         
@@ -140,15 +142,15 @@ public class Card : MonoBehaviour
             if (Input.mousePosition.x < Screen.width / 2) //Battlefield left
             {
                 Debug.Log("Dropping Card to Battlefield left");
-                nextCardPos = ArenaManager.instance.GetBattlefieldPosition(-1);
+                nextCardPos = Utility.GetArenaCardPosition(-1);
             }
             else //Battlefield right
             {
                 Debug.Log("Dropping Card to Battlefield right");
-                nextCardPos = ArenaManager.instance.GetBattlefieldPosition(1);
+                nextCardPos = Utility.GetArenaCardPosition(1);
             }
             
-            MoveCard(nextCardPos, CardPlaces.Battlefield);
+            MoveCard(nextCardPos, CardLocations.Arena);
             
 
         }
@@ -160,7 +162,7 @@ public class Card : MonoBehaviour
         
     }
 
-    public void MoveCard(Vector3 targetPosition, CardPlaces targetPlace)
+    public void MoveCard(Vector3 targetPosition, CardLocations targetPlace)
     {
         
        
@@ -171,18 +173,18 @@ public class Card : MonoBehaviour
                 
                 switch (targetPlace)
                 {
-                    case CardPlaces.Hand: // ToHand
-                        currentPlace = CardPlaces.Hand;
+                    case CardLocations.Hand: // ToHand
+                        currentPlace = CardLocations.Hand;
                         
                         cardCanvas.sortingOrder = originalSortingOrder;
                         break;
                     
-                    case CardPlaces.Battlefield: // ToBattlefield
-                        currentPlace = CardPlaces.Battlefield;
+                    case CardLocations.Arena: // ToBattlefield
+                        currentPlace = CardLocations.Arena;
                         
                         cardCanvas.sortingOrder = originalSortingOrder;
-                        ArenaManager.instance.NewCardOnBattlefield(gameObject);
-                        HandManager.instance.UpdateHandPositions();
+                        Utility.AddCardToArena(gameObject);
+                        Utility.UpdateHandPositions();
                         break;
                 }
                
