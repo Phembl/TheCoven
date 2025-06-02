@@ -30,15 +30,6 @@ public class Card : MonoBehaviour
     int arenalayerMask = (1 << 6);
     
     //State tracking variable
-    public enum CardLocations
-    {
-        None,
-        Deck,
-        Hand,
-        Arena,
-        Exhaust
-    }
-    
     private enum CardStates
     {
         resting,
@@ -47,7 +38,7 @@ public class Card : MonoBehaviour
         moving
     }
     [ShowInInspector, ReadOnly]
-    private CardLocations currentPlace = CardLocations.Deck;
+    private CardLocations currentLocation = CardLocations.Deck;
     [ShowInInspector, ReadOnly]
     private CardStates currentState = CardStates.resting;
     
@@ -100,7 +91,7 @@ public class Card : MonoBehaviour
     void OnMouseDown()
     {
         if(currentState != CardStates.hovering) return;
-        if (currentPlace == CardLocations.Arena) return;
+        if (currentLocation == CardLocations.Arena) return;
         currentState = CardStates.dragged;
         
         startPosition = transform.position;
@@ -114,7 +105,7 @@ public class Card : MonoBehaviour
     void OnMouseDrag() 
     {
         if(currentState != CardStates.dragged) return;
-        if (currentPlace == CardLocations.Arena) return;
+        if (currentLocation == CardLocations.Arena) return;
         
         // Move card with mouse while maintaining offset
         transform.position = GetMouseWorldPosition() + dragOffset;
@@ -123,9 +114,7 @@ public class Card : MonoBehaviour
     void OnMouseUp()
     {   
         if(currentState != CardStates.dragged) return;
-        if (currentPlace == CardLocations.Arena) return;
-        
-        currentState = CardStates.moving;
+        if (currentLocation == CardLocations.Arena) return;
         
         if (hoverScaleTween != null) hoverScaleTween.Kill();
         if (transform.localScale.x != 1) hoverScaleTween = transform.DOScale(1f, scaleTweenTime).SetEase(Ease.OutQuad);
@@ -156,35 +145,32 @@ public class Card : MonoBehaviour
         }
         else
         {
-            MoveCard(startPosition, 0);
+            MoveCard(startPosition, CardLocations.Hand);
         }
         
         
     }
 
-    public void MoveCard(Vector3 targetPosition, CardLocations targetPlace)
+    public void MoveCard(Vector3 targetPosition, CardLocations targetLocation, bool fromDrag = true)
     {
-        
+        currentState = CardStates.moving;
        
-        transform.DOMove(targetPosition, Utility.CalculateCardMoveDuration(targetPosition, transform)).SetEase(Ease.OutQuad)
+        transform.DOMove(targetPosition, Utility.CalculateCardMoveDuration(targetPosition, transform)).SetEase(Ease.OutBack)
             .OnComplete(() =>
             {
                 currentState = CardStates.resting;
+                currentLocation = targetLocation;
                 
-                switch (targetPlace)
+                switch (targetLocation)
                 {
-                    case CardLocations.Hand: // ToHand
-                        currentPlace = CardLocations.Hand;
-                        
-                        cardCanvas.sortingOrder = originalSortingOrder;
+                    case CardLocations.Hand: 
+                        if (fromDrag) cardCanvas.sortingOrder = originalSortingOrder;
                         break;
                     
-                    case CardLocations.Arena: // ToBattlefield
-                        currentPlace = CardLocations.Arena;
-                        
-                        cardCanvas.sortingOrder = originalSortingOrder;
+                    case CardLocations.Arena: 
+                        //cardCanvas.sortingOrder = originalSortingOrder;
                         Utility.AddCardToArena(gameObject);
-                        Utility.UpdateHandPositions();
+                        Utility.UpdateCardPositions(CardLocations.Hand);
                         break;
                 }
                

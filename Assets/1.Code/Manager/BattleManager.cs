@@ -51,6 +51,7 @@ public class BattleManager : MonoBehaviour
     public void ResolveButtonIsPressed()
     {
         StartCoroutine(ResolveBoard());
+        
     }
     
     private IEnumerator ResolveBoard() 
@@ -92,6 +93,8 @@ public class BattleManager : MonoBehaviour
             nextCard.DOScale(1f, cardResolveScaleSpeed);
             yield return new WaitForSeconds(cardResolveScaleSpeed);
         }
+        
+        
     }
     
     

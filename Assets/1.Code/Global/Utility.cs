@@ -7,7 +7,14 @@ using DG.Tweening;
 
 namespace Game.Global
 {
-
+    public enum CardLocations
+    {
+        None,
+        Deck,
+        Hand,
+        Arena,
+        Exhaust
+    }
     
     public static class Utility
     { 
@@ -15,7 +22,7 @@ namespace Game.Global
     private const float CARD_WIDTH = 400f;
     private const float HAND_CARDSPACING = 25f;
     private const float ARENA_CARDSPACING= 25f;
-    private const int HAND_ORDER_BASE = 500;
+    private const int CARD_ORDER_BASE = 500;
         
     //Card Container
     private static Transform handCardHolder = BattleManager.instance.handCardHolder;
@@ -80,7 +87,7 @@ namespace Game.Global
         if (cardsToDraw <= 0) yield break;
 
         // Calculate final positions for all cards (existing + new)
-        float[] newPositions = CalculateHandCardPositions(cardsInHand + cardsToDraw);
+        float[] newPositions = CalculateCardPositions(cardsInHand + cardsToDraw, handBounds.size.x, HAND_CARDSPACING);
 
         // If cards are already in hand, move existing cards to their new positions.
         if (cardsInHand > 0)
@@ -108,7 +115,7 @@ namespace Game.Global
 
             // Set parent to hand container
             nextCard.SetParent(handCardHolder);
-            UpdateHandOrder();
+            UpdateCardOrder(handCardHolder);
 
             // Move next card to deck button position to start animation
             nextCard.position = new Vector3(deckIcon.position.x, deckIcon.position.y, nextCard.position.z);
@@ -120,98 +127,29 @@ namespace Game.Global
             Vector3 targetPosition = new Vector3(targetX, handBounds.offset.y, nextCard.position.z);
 
             // Animate the card to its position in hand
-            nextCard.DOMove(targetPosition, cardDrawDuration).SetEase(Ease.OutBack);
+            //THIS SHOULD USE CARD INTERNAl FUNC MOVECARD 
+            //nextCard.DOMove(targetPosition, cardDrawDuration).SetEase(Ease.OutBack);
+            nextCard.GetComponent<Card>().MoveCard(targetPosition,CardLocations.Hand, false);
             
 
             // Wait before drawing next card for visual clarity
             yield return new WaitForSeconds(cardDrawDelayBetweenCards);
         }
-    }
-    
-    private static float[] CalculateHandCardPositions(int totalCards)
-    {
-        float[] positions = new float[totalCards];
-    
-        // If no cards, return empty array
-        if (totalCards == 0) return positions;
-    
-        // Calculate total width if using ideal spacing
-        float idealTotalWidth = (totalCards * CARD_WIDTH) + ((totalCards - 1) * HAND_CARDSPACING);
-    
-        // Determine if we need to compress (overlap cards)
-        bool needsCompression = idealTotalWidth > handBounds.size.x;
-    
-        // Calculate appropriate spacing based on available width
-        float actualSpacing;
-        if (needsCompression && totalCards > 1) {
-            // Calculate compressed spacing (might be negative for overlap)
-            actualSpacing = (handBounds.size.x - (totalCards * CARD_WIDTH)) / (totalCards - 1);
-        } else {
-            actualSpacing = HAND_CARDSPACING;
-        }
-    
-        // Calculate total width with actual spacing
-        float totalWidth = (totalCards * CARD_WIDTH) + ((totalCards - 1) * actualSpacing);
-    
-        // Calculate starting position (leftmost card)
-        float startX = -totalWidth / 2 + (CARD_WIDTH / 2);
-    
-        // Calculate position for each card
-        for (int i = 0; i < totalCards; i++) {
-            positions[i] = startX + i * (CARD_WIDTH + actualSpacing);
-            //Debug.Log($"Calculated position{i}: {positions[i]}");
-        }
-    
-        return positions;
+        
+        
     }
     
 
-    public static void UpdateHandPositions(bool animate = true)
-    {
-        // Get current number of cards in hand
-        int cardsInHand = handCardHolder.childCount;
-        
-        // Calculate positions for all cards
-        float[] cardPositions = CalculateHandCardPositions(cardsInHand);
-        
-        // Update position of each card
-        for (int i = 0; i < cardsInHand; i++)
-        {
-           
-            Transform nextCard = handCardHolder.GetChild(i);
-            if (animate)
-            {
-                // Animate to new position
-                nextCard.DOMoveX(cardPositions[i], cardDrawDelayBetweenCards).SetEase(Ease.OutQuint);
-            }
-            else
-            {
-                // Instantly set new position
-                Vector3 pos = nextCard.position;
-                pos.x = cardPositions[i];
-                nextCard.position = pos;
-            }
-        }
-        UpdateHandOrder();
-    } 
     
-    /// <summary>
-    /// This function sets the Z order and Sorting order of all cards in hand according to their sibling index.
-    /// </summary>
-    private static void UpdateHandOrder()
-    {
-        for (int i = 0; i < handCardHolder.childCount; i++)
-        {
-            
-            Transform nextCard = handCardHolder.GetChild(i);
-            float nextCardZ = 0 + i;
-            nextCard.transform.position = new Vector3(nextCard.transform.position.x, nextCard.transform.position.y, nextCardZ);
-            nextCard.transform.GetChild(0).GetComponent<Canvas>().sortingOrder = HAND_ORDER_BASE - i;
-        }
-    }
-#endregion -------------Card Effect Utils----------//
+    
+
+#endregion -------------Hand Utils----------//
     
 #region ------------Card Utils------------//
+
+    /// <summary>
+    /// This calculates the duration how long the movement of a card takes from its current pos to a target pos.
+    /// </summary>
     public static float CalculateCardMoveDuration(Vector3 targetPos, Transform card)
     {
         // Get the distance between current position and target position
@@ -236,6 +174,108 @@ namespace Game.Global
 
         return duration;
     }
+    
+    /// <summary>
+    /// This calculates the positions of all cards in a given area.
+    /// It will automatically return overlapping positions if the area is not wide enough for all cards.
+    /// </summary>
+    private static float[] CalculateCardPositions(int totalCards, float cardAreaWidth, float cardSpacing)
+    {
+        float[] positions = new float[totalCards];
+    
+        // If no cards, return empty array
+        if (totalCards == 0) return positions;
+    
+        // Calculate total width if using ideal spacing
+        float idealTotalWidth = (totalCards * CARD_WIDTH) + ((totalCards - 1) * cardSpacing);
+    
+        // Determine if we need to compress (overlap cards)
+        bool needsCompression = idealTotalWidth > cardAreaWidth;
+    
+        // Calculate appropriate spacing based on available width
+        float actualSpacing;
+        if (needsCompression && totalCards > 1) {
+            // Calculate compressed spacing (might be negative for overlap)
+            actualSpacing = (cardAreaWidth - (totalCards * CARD_WIDTH)) / (totalCards - 1);
+        } else {
+            actualSpacing = cardSpacing;
+        }
+    
+        // Calculate total width with actual spacing
+        float totalWidth = (totalCards * CARD_WIDTH) + ((totalCards - 1) * actualSpacing);
+    
+        // Calculate starting position (leftmost card)
+        float startX = -totalWidth / 2 + (CARD_WIDTH / 2);
+    
+        // Calculate position for each card
+        for (int i = 0; i < totalCards; i++) {
+            positions[i] = startX + i * (CARD_WIDTH + actualSpacing);
+            //Debug.Log($"Calculated position{i}: {positions[i]}");
+        }
+    
+        return positions;
+    }
+    
+    public static void UpdateCardPositions(CardLocations location, bool animate = true)
+    {
+        Transform cardHolder = null;
+        float areaWidth = 0;
+        
+        switch (location)
+        {
+            case CardLocations.Hand:
+                cardHolder = handCardHolder;
+                areaWidth = handBounds.size.x;
+                break;
+            
+            case CardLocations.Arena:
+                cardHolder = arenaCardHolder;
+                areaWidth = arenaBounds.size.x;
+                break;
+                
+        }
+        // Get current number of cards in hand
+        int cardsInHand = cardHolder.childCount;
+        
+        // Calculate positions for all cards
+        float[] cardPositions = CalculateCardPositions(cardsInHand, areaWidth, HAND_CARDSPACING);
+        
+        // Update position of each card
+        for (int i = 0; i < cardsInHand; i++)
+        {
+           
+            Transform nextCard = cardHolder.GetChild(i);
+            if (animate)
+            {
+                // Animate to new position
+                nextCard.DOMoveX(cardPositions[i], cardDrawDelayBetweenCards).SetEase(Ease.OutQuint);
+            }
+            else
+            {
+                // Instantly set new position
+                Vector3 pos = nextCard.position;
+                pos.x = cardPositions[i];
+                nextCard.position = pos;
+            }
+        }
+        UpdateCardOrder(cardHolder);
+    } 
+    
+    /// <summary>
+    /// This function sets the Z order and Sorting order of all cards in given container according to their sibling index.
+    /// </summary>
+    private static void UpdateCardOrder(Transform cardHolder)
+    {
+        for (int i = 0; i < cardHolder.childCount; i++)
+        {
+            
+            Transform nextCard = cardHolder.GetChild(i);
+            float nextCardZ = 0 + i;
+            nextCard.transform.position = new Vector3(nextCard.transform.position.x, nextCard.transform.position.y, nextCardZ);
+            nextCard.transform.GetChild(0).GetComponent<Canvas>().sortingOrder = CARD_ORDER_BASE - i;
+        }
+    }
+    
 #endregion ---------------Card Utils----------//
     
 #region ------------Arena Utils------------//
@@ -284,16 +324,27 @@ public static void AddCardToArena(GameObject card)
     int rayLayer = 1 << LayerMask.NameToLayer("Card");
         
     RaycastHit2D[] rayHits = Physics2D.RaycastAll(rayOrigin, rayDirection, 5000, rayLayer);
-        
-    //Set Card Sibling order to match Battlefield order
+    
+    //Set Card order according to physical order (because card could have been added left or right).
     int siblingIndex = 0;
     foreach (RaycastHit2D hit in rayHits)
     {
         hit.transform.SetSiblingIndex(siblingIndex);
         siblingIndex++;
     }
+    
+    UpdateCardPositions(CardLocations.Arena);
+    //Do this for Z order
+    //UpdateCardOrder(arenaCardHolder);
         
 }
+
+public static void UpdateArenaPositions()
+{
+    
+}
+
+
 #endregion ------------Arena Utils----------//
     
     

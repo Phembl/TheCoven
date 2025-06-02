@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Button_Attack : MonoBehaviour
+public class Button_Resolve : MonoBehaviour
 {
 
     private bool isInactive;
