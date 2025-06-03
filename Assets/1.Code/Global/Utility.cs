@@ -22,11 +22,11 @@ namespace Game.Global
     private static Transform handCardHolder = BattleManager.instance.handCardHolder;
     private static Transform deckCardHolder = BattleManager.instance.deckCardHolder;
     private static Transform arenaCardHolder = BattleManager.instance.arenaCardHolder;
+    private static Transform exhaustCardHolder = BattleManager.instance.exhaustCardHolder;
     
     //Hand Settings
     private static Transform deckIcon = BattleManager.instance.deckIcon;
-    private static float cardDrawDuration = BattleManager.instance.drawDuration;
-    private static float cardDrawDelayBetweenCards = BattleManager.instance.delayBetweenDraws;
+    private static float cardDrawDelayBetweenCards = BattleManager.instance.delayBetweenDraws * Global.timeMult;
     private static BoxCollider2D handBounds = BattleManager.instance.handBounds;
     
     //Arena Settings
@@ -95,7 +95,8 @@ namespace Game.Global
                 float nextHandCardMoveX = newPositions[(0 + i)]; // Get the correct X from newPositions list
                 Vector3 nextHandCardTarget = new Vector3(nextHandCardMoveX, nextHandCard.position.y, nextHandCard.position.z);
                 
-                nextHandCard.DOMove(nextHandCardTarget, cardDrawDuration).SetEase(Ease.OutQuint); // Move Card
+                //Nudge Card
+                nextHandCard.DOMove(nextHandCardTarget, 0.2f * Global.timeMult).SetEase(Ease.OutQuint); // Move Card
             }
         }
 
@@ -110,15 +111,15 @@ namespace Game.Global
             // Set parent to hand container
             nextCard.SetParent(handCardHolder);
             UpdateCardOrder(handCardHolder);
-
-            // Move next card to deck button position to start animation
-            nextCard.position = new Vector3(deckIcon.position.x, deckIcon.position.y, nextCard.position.z);
             
             int newCardPositionIndex = cardsInHand + i;
 
             // Calculate target position
             float targetX = newPositions[newCardPositionIndex];
             Vector3 targetPosition = new Vector3(targetX, handBounds.offset.y, nextCard.position.z);
+            
+            // Move next card to draw Position
+            nextCard.position = new Vector3(targetPosition.x, targetPosition.y - 500, targetPosition.z);
 
             // Move the card to its position in hand
             nextCard.GetComponent<Card>().MoveCard(targetPosition,CardLocations.Hand, false);
@@ -326,16 +327,21 @@ public static void AddCardToArena(GameObject card)
     //Do this for Z order
     //UpdateCardOrder(arenaCardHolder);
         
-}
+    }
 
-public static void UpdateArenaPositions()
-{
-    
-}
+
 
 
 #endregion ------------Arena Utils----------//
     
+#region ------------Exhaust Utils------------//
+
+    public static void AddCardToExhaust(GameObject card)
+    {
+        card.transform.SetParent(arenaCardHolder);
+    }
+
+#endregion ------------Exhaust Utils------------//  
 
     
     }//Class close

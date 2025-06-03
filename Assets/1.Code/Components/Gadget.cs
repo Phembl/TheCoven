@@ -7,7 +7,7 @@ using VInspector;
 public class Gadget : MonoBehaviour
 {
     //Values
-    private int currentPower;
+    [HideInInspector] public int currentPower;
     private Card cardComponent;
     
     //Editor

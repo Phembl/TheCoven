@@ -103,6 +103,7 @@ public class Effect : MonoBehaviour
     //This is called by the Card component
     public string GetCardEffectText()
     {
+        Debug.Log(cardEffectData.cardEffectType);
         string cardEffectText = CardEffectText.
             GetCardEffectText(cardEffectData);
         return cardEffectText;

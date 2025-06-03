@@ -12,36 +12,36 @@ using TMPro;
 
 public class BattleManager : MonoBehaviour
 {
+    //Enemy
+    private int currentEnemyHealth;
+    
     public static BattleManager instance;
     
     [Tab("Hand")]
-    public float drawDuration = 0.5f; // Duration of draw animation
     public float delayBetweenDraws = 0.1f; // Delay between consecutive draws
-    public int testCardsToDraw = 3;
-    
-    [Button("Draw Cards")]
-    public void TestDrawButton()
-    {
-        StartCoroutine(Utility.DrawCardsToHand(testCardsToDraw));
-    }
     [EndTab] 
     
     [Tab("Settings")]
+    [Header("Card Holder References")]
     public Transform handCardHolder;
     public Transform deckCardHolder;
     public Transform arenaCardHolder;
+    public Transform exhaustCardHolder;
     public Transform deckIcon;
     public Transform exhaustIcon;
     [Space] 
+    [Header("Area References")]
     public BoxCollider2D handBounds;
     public BoxCollider2D arenaBounds;
     [Space] 
-    [Header("UI Settings")]
+    [Header("UI References")]
     public TextMeshProUGUI attackPowerText;
+    public TextMeshProUGUI enemyHealthText;
     [Space] 
-    public float resolveSpeed = 1f;
-
-    [EndTab] private float cardResolveScaleSpeed;
+    [Header("Component References")]
+    public Enemy currentEnemy;
+    public Deck currentDeck;
+    [EndTab]
     
     private void Awake()
     {
@@ -50,24 +50,47 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
-        cardResolveScaleSpeed = resolveSpeed / 3;
+        StartCoroutine(StartBattle());
+    }
+
+    private IEnumerator StartBattle()
+    {
+        foreach (GameObject nextCardToAdd in currentDeck.cardsInDeck)
+        {
+            GameObject nextCard = Instantiate(nextCardToAdd, deckCardHolder);
+            nextCard.transform.position = new Vector3(-3000,0,0);
+            
+        }
+        currentEnemyHealth = currentEnemy.enemyHealth;
+            
+        attackPowerText.text = "";
+        enemyHealthText.text = currentEnemyHealth.ToString();
+
+        yield break;
     }
     
     public void ResolveButtonIsPressed()
     {
-        StartCoroutine(ResolveBoard());
-        
+        StartCoroutine(ResolveArena());
     }
     
-    private IEnumerator ResolveBoard() 
+    private IEnumerator ResolveArena() 
     {
-        Debug.Log("Resolving board");
+        Debug.Log("Resolving Effects");
+        yield return StartCoroutine(ResolveEffects());
+        yield return new WaitForSeconds(0.2f * Global.timeMult);
+        yield return StartCoroutine(ResolvePower());
+        yield return new WaitForSeconds(0.2f * Global.timeMult);
+        yield return StartCoroutine(ExhaustCards());
 
+
+    }
+    #region ------------Board Resolve------------//
+    
+    private IEnumerator ResolveEffects()
+    {
         foreach (Transform nextCard in arenaCardHolder)
         {
-            //Prepare Card
-            Canvas nextCardCanvas = nextCard.GetChild(0).GetComponent<Canvas>();
-            int nextCardOriginalSortingOrder = nextCardCanvas.sortingOrder;
             
             //Animate Card
             Card nextCardComponent = nextCard.GetComponent<Card>();
@@ -81,7 +104,7 @@ public class BattleManager : MonoBehaviour
                 foreach (Effect effect in nextCardEffects)
                 {
                     yield return StartCoroutine(effect.DoEffect(boardID));
-                    yield return new WaitForSeconds(1f * Global.timeMult);
+                    yield return new WaitForSeconds(0.5f * Global.timeMult);
                 }
                 
             }
@@ -89,20 +112,64 @@ public class BattleManager : MonoBehaviour
             else
             {
                 Debug.Log("No effect");
-                yield return new WaitForSeconds(0.5f * Global.timeMult);
+                yield return new WaitForSeconds(0.2f * Global.timeMult);
             }
-            
             
             //Finish Up Card
             yield return StartCoroutine(nextCardComponent.AnimateCard(CardAnimations.ResolveEnd));
         }
         
-        yield return new WaitForSeconds(0.5f);
+       
+    }
+
+    private IEnumerator ResolvePower()
+    {
+        int powerSum = 0;
         
-        
-        
+        foreach (Transform nextCard in arenaCardHolder)
+        {
+            int cardPower = 0;
+            Card nextCardComponent = nextCard.GetComponent<Card>();
+            
+            StartCoroutine(nextCardComponent.AnimateCard(CardAnimations.Attack));
+
+            if (nextCard.tag == "Character")
+            {
+                cardPower = nextCard.GetComponent<Character>().currentPower;  
+            }
+            
+            else if (nextCard.tag == "Gadget")
+            {
+                cardPower = nextCard.GetComponent<Gadget>().currentPower;  
+            }
+            
+       
+            currentEnemyHealth -= cardPower;
+            enemyHealthText.text = currentEnemyHealth.ToString();
+            
+            if (currentEnemyHealth <= 0) WinBattle();
+            
+            
+            yield return new WaitForSeconds(0.5f * Global.timeMult);
+        }
+    }
+
+    private IEnumerator ExhaustCards()
+    {
+        foreach (Transform nextCard in arenaCardHolder)
+        {
+            nextCard.GetComponent<Card>().MoveCard(exhaustIcon.position, CardLocations.Exhaust, false);
+            yield return new WaitForSeconds(0.2f * Global.timeMult);
+        }
+        yield break;
     }
     
-    
+    #endregion ------------Board Resolve------------//
+
+
+    private void WinBattle()
+    {
+        Debug.Log("Winning Battle");
+    }
     
 }

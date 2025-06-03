@@ -184,7 +184,10 @@ public class Card : MonoBehaviour
     private IEnumerator AnimateCardAttack()
     {
         //Attack Anim
-        yield return new WaitForSeconds(0.2f);
+        float animationTime = 0.2f * Global.timeMult;
+        Vector3 moveVector = new Vector3(0,70,0);
+        transform.DOPunchPosition(moveVector, animationTime);
+        yield return new WaitForSeconds(animationTime);
     }
     
     private IEnumerator AnimateCardUpdatePower()
@@ -242,6 +245,10 @@ public class Card : MonoBehaviour
                         //cardCanvas.sortingOrder = originalSortingOrder;
                         Utility.AddCardToArena(gameObject);
                         Utility.UpdateCardPositions(CardLocations.Hand);
+                        break;
+                    
+                    case CardLocations.Exhaust:
+                        Utility.AddCardToExhaust(gameObject);
                         break;
                 }
                

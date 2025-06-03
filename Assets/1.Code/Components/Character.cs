@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +9,7 @@ using Game.Global;
 public class Character : MonoBehaviour
 {
     //Values
-    private int currentPower;
+    [HideInInspector] public int currentPower;
     private Card cardComponent;
     
     //Editor
@@ -71,10 +72,10 @@ public class Character : MonoBehaviour
     void Start()
     {
         currentPower = basePower;
-        InitializeCharacter();
+        StartCoroutine(InitializeCharacter());
     }
 
-    void InitializeCharacter()
+    IEnumerator InitializeCharacter()
     {
         //Check if everything is properly set up
         if (titleText == null) Debug.LogError("Title text is missing!");
@@ -99,6 +100,10 @@ public class Character : MonoBehaviour
         }
         else
         {
+            //THIS MUST BE REPLACED BY PROPER LOADING
+            //Wait for effect comp to be initialized properly
+            yield return new WaitForSeconds(0.1f);
+            
             string combinedEffectText = "";
             foreach (Effect effect in cardEffects)
             {
