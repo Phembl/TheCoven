@@ -28,6 +28,7 @@ public class Card : MonoBehaviour
     private Vector3 dragOffset;
     
     int arenalayerMask = (1 << 6);
+    private int currentSortingOrder;
     
     //State tracking variable
     private enum CardStates
@@ -57,6 +58,7 @@ public class Card : MonoBehaviour
         cam = Camera.main;
     }
     
+    #region ------------Card Mouse Interactions------------//
     void OnMouseEnter()
     {
         if(currentState != CardStates.resting) return;
@@ -150,12 +152,81 @@ public class Card : MonoBehaviour
         
         
     }
+    
+    #endregion -------------Card Mouse Interactions----------//
+    
+    #region ------------Card Animations------------//
+    
+    public IEnumerator AnimateCard(CardAnimations animation)
+    {
+        switch (animation)
+        {
+            case CardAnimations.Attack:
+                yield return StartCoroutine(AnimateCardAttack());
+                break;
+            
+            case CardAnimations.UpdatePower:
+                yield return StartCoroutine(AnimateCardUpdatePower());
+                break;
+            
+            case CardAnimations.ResolveStart:
+                yield return StartCoroutine(AnimateCardResolveStart());
+                break;
+            
+            case CardAnimations.ResolveEnd:
+                yield return StartCoroutine(AnimateCardResolveEnd());
+                break;
+        }
+        
+        
+    }
 
+    private IEnumerator AnimateCardAttack()
+    {
+        //Attack Anim
+        yield return new WaitForSeconds(0.2f);
+    }
+    
+    private IEnumerator AnimateCardUpdatePower()
+    {
+        float animationTime = 0.2f * Global.timeMult;
+        transform.DOShakeRotation(animationTime, new Vector3(0, 0, 10));
+        yield return new WaitForSeconds(animationTime);
+    }
+
+    private IEnumerator AnimateCardResolveStart()
+    {
+        float animationTime = 0.2f * Global.timeMult;
+        
+        currentSortingOrder = cardCanvas.sortingOrder;
+        cardCanvas.sortingOrder += 1000;
+        
+        transform.DOScale(1.2f, animationTime);
+        yield return new WaitForSeconds(animationTime);
+    }
+
+    private IEnumerator AnimateCardResolveEnd()
+    {
+        float animationTime = 0.2f * Global.timeMult;
+        cardCanvas.sortingOrder = currentSortingOrder;
+        
+        transform.DOScale(1f, animationTime);
+        yield return new WaitForSeconds(animationTime);
+    }
+    
+    
+    #endregion ------------Card Animations------------//
+    
+    #region ------------Card Helper------------//
+    
     public void MoveCard(Vector3 targetPosition, CardLocations targetLocation, bool fromDrag = true)
     {
         currentState = CardStates.moving;
        
-        transform.DOMove(targetPosition, Utility.CalculateCardMoveDuration(targetPosition, transform)).SetEase(Ease.OutBack)
+        transform.DOMove(
+                targetPosition, 
+                Utility.CalculateCardMoveDuration(targetPosition, transform) * Global.timeMult)
+            .SetEase(Ease.OutBack)
             .OnComplete(() =>
             {
                 currentState = CardStates.resting;
@@ -177,7 +248,6 @@ public class Card : MonoBehaviour
             });
     }
     
-    //Helper Functions
     private Vector3 GetMouseWorldPosition() 
     {
         Vector3 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
@@ -190,5 +260,7 @@ public class Card : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         cardCanvas.sortingOrder = originalSortingOrder;
     }
+    
+    #endregion ------------Card Helper------------//
     
 }

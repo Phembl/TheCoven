@@ -39,7 +39,8 @@ namespace Game.CardEffects
         private static IEnumerator EffectBuff(GameObject targetCard, int buffStrength)
         {
             Debug.Log($"Buff {targetCard.name} for {buffStrength}.");
-            targetCard.GetComponent<Character>().UpdatePower(buffStrength);
+            if (targetCard.tag == "Character") targetCard.GetComponent<Character>().UpdatePower(buffStrength); 
+            else if (targetCard.tag == "Gadget") targetCard.GetComponent<Gadget>().UpdatePower(buffStrength); 
             yield break;
         }
 

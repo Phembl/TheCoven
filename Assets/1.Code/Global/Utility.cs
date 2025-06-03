@@ -7,17 +7,11 @@ using DG.Tweening;
 
 namespace Game.Global
 {
-    public enum CardLocations
-    {
-        None,
-        Deck,
-        Hand,
-        Arena,
-        Exhaust
-    }
+
     
     public static class Utility
     { 
+    
     //Constants
     private const float CARD_WIDTH = 400f;
     private const float HAND_CARDSPACING = 25f;
@@ -126,9 +120,7 @@ namespace Game.Global
             float targetX = newPositions[newCardPositionIndex];
             Vector3 targetPosition = new Vector3(targetX, handBounds.offset.y, nextCard.position.z);
 
-            // Animate the card to its position in hand
-            //THIS SHOULD USE CARD INTERNAl FUNC MOVECARD 
-            //nextCard.DOMove(targetPosition, cardDrawDuration).SetEase(Ease.OutBack);
+            // Move the card to its position in hand
             nextCard.GetComponent<Card>().MoveCard(targetPosition,CardLocations.Hand, false);
             
 
@@ -139,10 +131,7 @@ namespace Game.Global
         
     }
     
-
     
-    
-
 #endregion -------------Hand Utils----------//
     
 #region ------------Card Utils------------//
@@ -347,8 +336,7 @@ public static void UpdateArenaPositions()
 
 #endregion ------------Arena Utils----------//
     
-    
-    
+
     
     }//Class close
 }//Namespace close

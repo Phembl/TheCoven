@@ -8,6 +8,7 @@ using VInspector;
 using Random = UnityEngine.Random;
 using Game.CardEffects;
 using Game.Global;
+using TMPro;
 
 public class BattleManager : MonoBehaviour
 {
@@ -30,9 +31,13 @@ public class BattleManager : MonoBehaviour
     public Transform deckCardHolder;
     public Transform arenaCardHolder;
     public Transform deckIcon;
+    public Transform exhaustIcon;
     [Space] 
     public BoxCollider2D handBounds;
     public BoxCollider2D arenaBounds;
+    [Space] 
+    [Header("UI Settings")]
+    public TextMeshProUGUI attackPowerText;
     [Space] 
     public float resolveSpeed = 1f;
 
@@ -65,9 +70,8 @@ public class BattleManager : MonoBehaviour
             int nextCardOriginalSortingOrder = nextCardCanvas.sortingOrder;
             
             //Animate Card
-            nextCardCanvas.sortingOrder += 1000;
-            nextCard.DOScale(1.2f, (cardResolveScaleSpeed));
-            yield return new WaitForSeconds(cardResolveScaleSpeed + 0.2f);
+            Card nextCardComponent = nextCard.GetComponent<Card>();
+            yield return StartCoroutine(nextCardComponent.AnimateCard(CardAnimations.ResolveStart));
             
             // Get all Effect components on the next Card and resolves them
             Effect[] nextCardEffects = nextCard.GetComponents<Effect>();
@@ -77,22 +81,24 @@ public class BattleManager : MonoBehaviour
                 foreach (Effect effect in nextCardEffects)
                 {
                     yield return StartCoroutine(effect.DoEffect(boardID));
-                    yield return new WaitForSeconds(1f);
+                    yield return new WaitForSeconds(1f * Global.timeMult);
                 }
                 
             }
+            
             else
             {
                 Debug.Log("No effect");
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.5f * Global.timeMult);
             }
             
             
             //Finish Up Card
-            nextCardCanvas.sortingOrder = nextCardOriginalSortingOrder;
-            nextCard.DOScale(1f, cardResolveScaleSpeed);
-            yield return new WaitForSeconds(cardResolveScaleSpeed);
+            yield return StartCoroutine(nextCardComponent.AnimateCard(CardAnimations.ResolveEnd));
         }
+        
+        yield return new WaitForSeconds(0.5f);
+        
         
         
     }

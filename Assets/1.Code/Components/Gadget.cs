@@ -1,11 +1,10 @@
+using Game.Global;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using VInspector;
-using DG.Tweening;
-using Game.Global;
 
-public class Character : MonoBehaviour
+public class Gadget : MonoBehaviour
 {
     //Values
     private int currentPower;
@@ -20,14 +19,8 @@ public class Character : MonoBehaviour
     [Space]
     [SerializeField] private int basePower;
     [SerializeField] private int baseEndurance;
-    [Space] 
-    [SerializeField] private Houses characterHouse = Houses.Cyber;
-    [Space]
-    [SerializeField] private Classes characterClass1 = Classes.None;
-    [SerializeField] private Classes characterClass2 = Classes.None;
-    [SerializeField] private Classes characterClass3 = Classes.None;
     [EndTab]
-
+    
     [Tab("References")]
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI powerText;
@@ -37,44 +30,15 @@ public class Character : MonoBehaviour
     public Image cardBackground;
     [EndTab]
     
-    //Enums
-    private enum Classes
-    {
-        None,
-        Brawler,
-        Medic,
-        Soldier,
-        Hacker,
-        Sniper,
-        Trickster,
-        Tinkerer,
-        Technician,
-        Hexxe
-    }
-
-    private enum Houses
-    {
-        Cyber,
-        Beast,
-        Ying,
-        Downer,
-        Sludge
-    }
-    
-    private enum Passives
-    {
-        None,
-        Stealth,
-        Slick
-    }
-    
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         currentPower = basePower;
-        InitializeCharacter();
+        InitializeGadget();
     }
 
-    void InitializeCharacter()
+    // Update is called once per frame
+    void InitializeGadget()
     {
         //Check if everything is properly set up
         if (titleText == null) Debug.LogError("Title text is missing!");
@@ -109,25 +73,6 @@ public class Character : MonoBehaviour
             effectText.text = combinedEffectText;
             Debug.Log("CardEffectTexts:\n" + combinedEffectText.Trim());
         }
-
-        switch (characterHouse)
-        {
-            case Houses.Cyber:
-                cardBackground.color = Color.black;
-                break;
-            case Houses.Beast:
-                cardBackground.color = Color.yellow;
-                break;
-            case Houses.Ying:
-                cardBackground.color = Color.red;
-                break;
-            case Houses.Downer:
-                cardBackground.color = Color.blue;
-                break;
-            case Houses.Sludge:
-                cardBackground.color = Color.green;
-                break;
-        }
     }
     
     public void UpdatePower(int powerToAdd)
@@ -142,5 +87,4 @@ public class Character : MonoBehaviour
         
         powerText.text = currentPower.ToString();
     }
-    
 }
