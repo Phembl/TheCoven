@@ -17,7 +17,16 @@ namespace Game.Global
         Attack,
         UpdatePower,
         ResolveStart,
-        ResolveEnd
+        ResolveEnd,
+        Exhaust
+    }
+
+    public enum BattleCounters
+    {
+        None,
+        Deck,
+        Exhaust,
+        EnemyHealth
     }
     
     public static class Global

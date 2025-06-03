@@ -176,6 +176,10 @@ public class Card : MonoBehaviour
             case CardAnimations.ResolveEnd:
                 yield return StartCoroutine(AnimateCardResolveEnd());
                 break;
+            
+            case CardAnimations.Exhaust:
+                yield return StartCoroutine(AnimateCardExhaust());
+                break;
         }
         
         
@@ -216,8 +220,18 @@ public class Card : MonoBehaviour
         transform.DOScale(1f, animationTime);
         yield return new WaitForSeconds(animationTime);
     }
-    
-    
+
+    private IEnumerator AnimateCardExhaust()
+    {
+        float animationTime = 0.4f * Global.timeMult;
+        
+        cardCanvas.GetComponent<CanvasGroup>().DOFade(0, animationTime);
+        yield return new WaitForSeconds(animationTime);
+        Utility.AddCardToExhaust(gameObject);
+       
+    }
+
+
     #endregion ------------Card Animations------------//
     
     #region ------------Card Helper------------//

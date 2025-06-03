@@ -13,7 +13,9 @@ using TMPro;
 public class BattleManager : MonoBehaviour
 {
     //Enemy
-    private int currentEnemyHealth;
+    public int currentEnemyHealth;
+    public int currentDeckSize;
+    public int currentExhaustSize;
     
     public static BattleManager instance;
     
@@ -37,6 +39,8 @@ public class BattleManager : MonoBehaviour
     [Header("UI References")]
     public TextMeshProUGUI attackPowerText;
     public TextMeshProUGUI enemyHealthText;
+    public TextMeshProUGUI deckSizeText;
+    public TextMeshProUGUI exhaustSizeText;
     [Space] 
     [Header("Component References")]
     public Enemy currentEnemy;
@@ -55,17 +59,21 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator StartBattle()
     {
+        attackPowerText.text = "";
+        
+        
+        UpdateCounter(BattleCounters.EnemyHealth, currentEnemy.enemyHealth);
+        UpdateCounter(BattleCounters.Deck, currentDeck.cardsInDeck.Length);
+        UpdateCounter(BattleCounters.Exhaust, 0);
+        
         foreach (GameObject nextCardToAdd in currentDeck.cardsInDeck)
         {
             GameObject nextCard = Instantiate(nextCardToAdd, deckCardHolder);
             nextCard.transform.position = new Vector3(-3000,0,0);
             
+            UpdateCounter(BattleCounters.Deck, 1);
         }
-        currentEnemyHealth = currentEnemy.enemyHealth;
-            
-        attackPowerText.text = "";
-        enemyHealthText.text = currentEnemyHealth.ToString();
-
+        
         yield break;
     }
     
@@ -131,8 +139,10 @@ public class BattleManager : MonoBehaviour
             int cardPower = 0;
             Card nextCardComponent = nextCard.GetComponent<Card>();
             
+            // Animate Attack
             StartCoroutine(nextCardComponent.AnimateCard(CardAnimations.Attack));
 
+            // Get Power
             if (nextCard.tag == "Character")
             {
                 cardPower = nextCard.GetComponent<Character>().currentPower;  
@@ -143,10 +153,11 @@ public class BattleManager : MonoBehaviour
                 cardPower = nextCard.GetComponent<Gadget>().currentPower;  
             }
             
-       
+            // Attack Enemy
             currentEnemyHealth -= cardPower;
             enemyHealthText.text = currentEnemyHealth.ToString();
             
+            // Check Win
             if (currentEnemyHealth <= 0) WinBattle();
             
             
@@ -158,13 +169,49 @@ public class BattleManager : MonoBehaviour
     {
         foreach (Transform nextCard in arenaCardHolder)
         {
-            nextCard.GetComponent<Card>().MoveCard(exhaustIcon.position, CardLocations.Exhaust, false);
+            StartCoroutine(nextCard.GetComponent<Card>().AnimateCard(CardAnimations.Exhaust));
             yield return new WaitForSeconds(0.2f * Global.timeMult);
+            currentExhaustSize++;
+            exhaustSizeText.text = currentExhaustSize.ToString();
+            
         }
-        yield break;
+      
     }
     
     #endregion ------------Board Resolve------------//
+    
+    #region ------------Battle States------------//
+
+    public void UpdateCounter(BattleCounters counter, int changeValue)
+    {
+        TextMeshProUGUI textField = null;
+        int newValue = 0;
+        
+        switch (counter)
+        {
+            case BattleCounters.Deck:
+                textField = deckSizeText;
+                newValue = currentDeckSize + changeValue;
+                currentDeckSize = newValue;
+                break;
+            
+            case BattleCounters.Exhaust:
+                textField = exhaustSizeText;
+                newValue = currentExhaustSize + changeValue;
+                currentExhaustSize = newValue;
+                break;
+            
+            case BattleCounters.EnemyHealth:
+                textField = enemyHealthText;
+                newValue = currentEnemyHealth + changeValue;
+                currentEnemyHealth = newValue;
+                break;
+        }
+        
+        textField.text = newValue.ToString();
+    }
+    
+    #endregion ------------Battle States------------//
 
 
     private void WinBattle()

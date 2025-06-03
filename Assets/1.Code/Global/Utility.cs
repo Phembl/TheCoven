@@ -123,8 +123,9 @@ namespace Game.Global
 
             // Move the card to its position in hand
             nextCard.GetComponent<Card>().MoveCard(targetPosition,CardLocations.Hand, false);
-            
 
+            BattleManager.instance.UpdateCounter(BattleCounters.Deck, -1);
+            
             // Wait before drawing next card for visual clarity
             yield return new WaitForSeconds(cardDrawDelayBetweenCards);
         }
@@ -338,7 +339,9 @@ public static void AddCardToArena(GameObject card)
 
     public static void AddCardToExhaust(GameObject card)
     {
-        card.transform.SetParent(arenaCardHolder);
+        card.transform.SetParent(exhaustCardHolder);
+        card.transform.position = new Vector3(3000, 0, 0);
+        card.transform.GetChild(0).GetComponent<CanvasGroup>().alpha = 1;
     }
 
 #endregion ------------Exhaust Utils------------//  

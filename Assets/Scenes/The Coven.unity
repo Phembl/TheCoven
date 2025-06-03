@@ -170,7 +170,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &215294842
 Transform:
   m_ObjectHideFlags: 0
@@ -389,6 +389,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6204e41dec6834f6b80cf3d825a82647, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentEnemyHealth: 0
+  currentDeckSize: 0
+  currentExhaustSize: 0
   delayBetweenDraws: 0.2
   handCardHolder: {fileID: 250232305}
   deckCardHolder: {fileID: 459617668}
@@ -400,6 +403,8 @@ MonoBehaviour:
   arenaBounds: {fileID: 1916947760}
   attackPowerText: {fileID: 1721099102}
   enemyHealthText: {fileID: 1762814453}
+  deckSizeText: {fileID: 729597827}
+  exhaustSizeText: {fileID: 1597308711}
   currentEnemy: {fileID: 881994730}
   currentDeck: {fileID: 858806572}
 --- !u!4 &495231267
@@ -1047,7 +1052,7 @@ GameObject:
   - component: {fileID: 729597828}
   - component: {fileID: 729597827}
   m_Layer: 5
-  m_Name: CardsInDeck_Text
+  m_Name: DeckSize_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1183,7 +1188,7 @@ GameObject:
   - component: {fileID: 830457680}
   - component: {fileID: 830457679}
   m_Layer: 5
-  m_Name: CardsInDeck_Title
+  m_Name: DeckSize_Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1808,7 +1813,7 @@ GameObject:
   - component: {fileID: 1479024525}
   - component: {fileID: 1479024524}
   m_Layer: 5
-  m_Name: CardsInExhaust_Title
+  m_Name: ExhaustSize_Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1944,7 +1949,7 @@ GameObject:
   - component: {fileID: 1597308712}
   - component: {fileID: 1597308711}
   m_Layer: 5
-  m_Name: CardsInExhaust_Text
+  m_Name: ExhaustSize_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
