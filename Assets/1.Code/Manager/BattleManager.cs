@@ -19,6 +19,11 @@ public class BattleManager : MonoBehaviour
     
     public static BattleManager instance;
     
+    [Tab("Battle")]
+    public GameObject currentEnemy;
+    public Deck currentDeck;
+    [EndTab]
+    
     [Tab("Hand")]
     public float delayBetweenDraws = 0.1f; // Delay between consecutive draws
     [EndTab] 
@@ -39,13 +44,15 @@ public class BattleManager : MonoBehaviour
     [Header("UI References")]
     public TextMeshProUGUI attackPowerText;
     public TextMeshProUGUI enemyHealthText;
+    public TextMeshProUGUI enemyNameText;
     public TextMeshProUGUI deckSizeText;
     public TextMeshProUGUI exhaustSizeText;
-    [Space] 
-    [Header("Component References")]
-    public Enemy currentEnemy;
-    public Deck currentDeck;
     [EndTab]
+
+    
+    
+    
+    
     
     private void Awake()
     {
@@ -54,15 +61,21 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(StartBattle());
+        InitializeBattle();
     }
+    
+#region ------------Battle Setup------------//
 
-    private IEnumerator StartBattle()
+    private void InitializeBattle()
     {
         attackPowerText.text = "";
         
-        
-        UpdateCounter(BattleCounters.EnemyHealth, currentEnemy.enemyHealth);
+        InitializeDeck();
+        InitializeEnemy();
+    }
+
+    private void InitializeDeck()
+    {
         UpdateCounter(BattleCounters.Deck, currentDeck.cardsInDeck.Length);
         UpdateCounter(BattleCounters.Exhaust, 0);
         
@@ -73,9 +86,24 @@ public class BattleManager : MonoBehaviour
             
             UpdateCounter(BattleCounters.Deck, 1);
         }
-        
-        yield break;
     }
+
+    private void InitializeEnemy()
+    {
+        Debug.Log("Initializing Enemy");
+        
+        GameObject nextEnemy = Instantiate(currentEnemy);
+        Enemy nextEnemyComponent = nextEnemy.GetComponent<Enemy>();
+        nextEnemy.name = ($"Enemy ({nextEnemyComponent.enemyName})");
+        
+        UpdateCounter(BattleCounters.EnemyHealth, nextEnemyComponent.enemyHealth);
+        enemyNameText.text = nextEnemyComponent.enemyName;
+        
+        
+        //INIT ENEMY ACTIONS
+    }
+    
+#endregion ------------Battle Setup------------//
     
     public void ResolveButtonIsPressed()
     {

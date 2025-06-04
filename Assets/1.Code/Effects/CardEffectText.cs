@@ -1,11 +1,12 @@
 using UnityEngine;
+using Game.Global;
 
 namespace Game.CardEffects
 {
     public static class CardEffectText
     {
         public static string GetCardEffectText (CardEffectData cardEffectData)
-        
+
         {
             string cardEffectFullText = "";
             string cardEffectTargetText = "";
@@ -21,8 +22,10 @@ namespace Game.CardEffects
                 (
                     cardEffectData.cardEffectType, 
                     cardEffectTargetText, 
-                    cardEffectData.cardEffectStrength, 
-                    cardEffectData.gadgetType);
+                    cardEffectData.cardEffectStrength,
+                    cardEffectData.gadgetName
+                
+                );
             
             if (cardEffectData.cardEffectRepeatCount > 0)
                 cardEffectRepeatText = ConstructRepeatText(cardEffectData.cardEffectRepeatCount);
@@ -112,7 +115,7 @@ namespace Game.CardEffects
 
             return gadgetTargetText;
         }
-        private static string ConstructEffectText(CardEffectTypes effectType, string targetText, int effectStrengh, GadgetTypes gadgetType)
+        private static string ConstructEffectText(CardEffectTypes effectType, string targetText, int effectStrength, string gadgetName)
         {
             string effectText = "";
             
@@ -120,20 +123,20 @@ namespace Game.CardEffects
             {
                 case CardEffectTypes.Buff:
                     effectText = 
-                        $"Increase the power of {targetText} by <color=green>{effectStrengh}</color>.";
+                        $"Increase the power of {targetText} by <color=green>{effectStrength}</color>.";
                     break;
                 
                 case CardEffectTypes.CardDraw:
-                    if (effectStrengh > 1)
+                    if (effectStrength > 1)
                     {
                         effectText = 
-                            $"Draw <color=green>{effectStrengh}</color> cards.";
+                            $"Draw <color=green>{effectStrength}</color> cards.";
                     }
 
                     else
                     {
                         effectText = 
-                            $"Draw <color=green>{effectStrengh}</color> card.";
+                            $"Draw <color=green>{effectStrength}</color> card.";
                     }
 
                    
@@ -141,7 +144,7 @@ namespace Game.CardEffects
                 
                 case CardEffectTypes.Tinker:
                     effectText = 
-                        $"Create a <color=#FF8C00>{gadgetType}</color> {targetText}.";
+                        $"Create a <color=#FF8C00>{gadgetName}</color> {targetText}.";
                     break;
                 
                 default:

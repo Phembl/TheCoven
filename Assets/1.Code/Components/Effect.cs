@@ -7,6 +7,7 @@ using Game.CardEffects;
 public class Effect : MonoBehaviour
 {
     private int cardEffectStrength;
+    private string gadgetName;
     private CardEffectTypes cardEffectType;
     private CardEffectTargets cardEffectTarget;
     private CardEffectData cardEffectData;
@@ -27,7 +28,7 @@ public class Effect : MonoBehaviour
     
     //If Tinker
     [ShowIf("effect", CardEffectTypes.Tinker)] 
-    [SerializeField] private GadgetTypes gadgetType = GadgetTypes.None;
+    [SerializeField] private GameObject gadgetPrefab;
     [SerializeField] private GadgetTargets gadgetTarget = GadgetTargets.None;
     [EndIf]
     [Space]
@@ -42,14 +43,13 @@ public class Effect : MonoBehaviour
         if (!repeat) repeatCount = 0;
         if (cardEffectType != CardEffectTypes.Tinker)
         {
-            gadgetType = GadgetTypes.None;
+            gadgetName = "";
             gadgetTarget = GadgetTargets.None;
         }
     }
-
-    void Start()
+    
+    public void InitializeCardEffect()
     {
-
         cardEffectType = effect;
         
         switch (cardEffectType)
@@ -66,12 +66,13 @@ public class Effect : MonoBehaviour
             
             case CardEffectTypes.Tinker:
                 cardEffectStrength = 0;
+                gadgetName = gadgetPrefab.name;
                 cardEffectTarget = CardEffectTargets.None;
                 break;
             
         }
         
-        ConstructEffectData();
+        ConstructEffectData(); 
     }
 
     private void ConstructEffectData()
@@ -80,12 +81,20 @@ public class Effect : MonoBehaviour
         {
             cardEffectType = this.cardEffectType,
             cardEffectTarget = this.cardEffectTarget,
-            gadgetType = this.gadgetType,
             gadgetTarget = this.gadgetTarget,
+            gadgetName = this.gadgetName,
             cardEffectStrength = this.cardEffectStrength,
             cardEffectUserBoardID = 0,
             cardEffectRepeatCount = repeatCount
         };
+    }
+    
+    //This is called by the Character component
+    public string GetCardEffectText()
+    {
+        string cardEffectText = CardEffectText.
+            GetCardEffectText(cardEffectData);
+        return cardEffectText;
     }
 
     public IEnumerator DoEffect(int boardID)
@@ -100,14 +109,7 @@ public class Effect : MonoBehaviour
         }
     }
 
-    //This is called by the Card component
-    public string GetCardEffectText()
-    {
-        Debug.Log(cardEffectData.cardEffectType);
-        string cardEffectText = CardEffectText.
-            GetCardEffectText(cardEffectData);
-        return cardEffectText;
-    }
+
     
     /*
     protected string ConstructTinkerTargetText()

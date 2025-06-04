@@ -28,6 +28,32 @@ namespace Game.Global
         Exhaust,
         EnemyHealth
     }
+
+    public enum EnemyActions
+    {
+        None,
+        PLACEHOLDER1,
+        PLACEHOLDER2,
+        PLACEHOLDER3,
+        PLACEHOLDER4,
+        PLACEHOLDER5,
+        PLACEHOLDER6,
+        PLACEHOLDER7,
+        PLACEHOLDER8
+    }
+    
+    public enum EnemyUltimate
+    {
+        None,
+        PLACEHOLDER1,
+        PLACEHOLDER2,
+        PLACEHOLDER3,
+        PLACEHOLDER4,
+        PLACEHOLDER5,
+        PLACEHOLDER6,
+        PLACEHOLDER7,
+        PLACEHOLDER8
+    }
     
     public static class Global
     {

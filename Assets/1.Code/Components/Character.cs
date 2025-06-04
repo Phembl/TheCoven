@@ -72,10 +72,12 @@ public class Character : MonoBehaviour
     void Start()
     {
         currentPower = basePower;
-        StartCoroutine(InitializeCharacter());
+        InitializeCharacter();
+        
+        float asdf = 1f * Global.timeMult;
     }
 
-    IEnumerator InitializeCharacter()
+    void InitializeCharacter()
     {
         //Check if everything is properly set up
         if (titleText == null) Debug.LogError("Title text is missing!");
@@ -91,6 +93,7 @@ public class Character : MonoBehaviour
         
         //Checks for effects
         Effect[] cardEffects = GetComponents<Effect>();
+        
         if (cardEffects.Length == 0)
         {
             //Removes Effect textbox if there is no effect
@@ -100,13 +103,11 @@ public class Character : MonoBehaviour
         }
         else
         {
-            //THIS MUST BE REPLACED BY PROPER LOADING
-            //Wait for effect comp to be initialized properly
-            yield return new WaitForSeconds(0.1f);
             
             string combinedEffectText = "";
             foreach (Effect effect in cardEffects)
             {
+                effect.InitializeCardEffect();
                 combinedEffectText += effect.GetCardEffectText() + "\n";
             }
 

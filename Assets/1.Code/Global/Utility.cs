@@ -7,8 +7,6 @@ using DG.Tweening;
 
 namespace Game.Global
 {
-
-    
     public static class Utility
     { 
     
@@ -32,35 +30,7 @@ namespace Game.Global
     //Arena Settings
     private static BoxCollider2D arenaBounds = BattleManager.instance.arenaBounds;
       
-#region ------------Card Effect Utils------------//
-        
-    /// <summary>
-    /// This function takes a CardEffectTarget and the siblingID of the effect user in the Arena.
-    /// It returns a target GameObject.
-    /// </summary>
-    public static GameObject GetCardEffectTarget(CardEffectTargets effectTarget, int resolverBoardID)
-    {
-        GameObject targetCard = null;
-
-        int randomTarget;
-
-        switch (effectTarget)
-        {
-            case CardEffectTargets.Random:
-                randomTarget = Random.Range(0, arenaCardHolder.childCount);
-                targetCard = arenaCardHolder.GetChild(randomTarget).gameObject;
-                break;
-            case CardEffectTargets.Self:
-                targetCard = arenaCardHolder.GetChild(resolverBoardID).gameObject;
-                break;
-            case CardEffectTargets.Right:
-                if (resolverBoardID + 1 == arenaCardHolder.childCount) break; //Checks if the resolved card is not the most-right
-                targetCard = arenaCardHolder.GetChild(resolverBoardID + 1).gameObject;
-                break;
-        }
-        return targetCard;
-    } 
-#endregion ------------Card Effect Utils------------//  
+ 
 
 #region ------------Hand Utils------------//
     

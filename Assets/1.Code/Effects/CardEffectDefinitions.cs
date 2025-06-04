@@ -37,20 +37,13 @@ namespace Game.CardEffects
         FarRight,
         FarLeft
     }
-    
-    public enum GadgetTypes
-    {
-        None,
-        Bomb,
-        Placeholder
-    }
 
     public struct CardEffectData
     {
         public CardEffectTypes cardEffectType;
         public CardEffectTargets cardEffectTarget;
-        public GadgetTypes gadgetType;
         public GadgetTargets gadgetTarget;
+        public string gadgetName;
         public int cardEffectStrength;
         public int cardEffectUserBoardID;
         public int cardEffectRepeatCount;
