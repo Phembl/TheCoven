@@ -14,9 +14,11 @@ namespace Game.CardEffects
             
             if (cardEffectData.cardEffectTarget != CardEffectTargets.None)
                 cardEffectTargetText = ConstructCardEffectTargetText(cardEffectData.cardEffectTarget);
-            
-            if (cardEffectData.gadgetTarget != GadgetTargets.None)
+
+            if (cardEffectData.gadgetTarget != GadgetTargets.None) 
                 cardEffectTargetText =  ConstructGadgetTargetText(cardEffectData.gadgetTarget);
+            
+                
             
             string cardEffectText = ConstructEffectText
                 (
@@ -110,6 +112,10 @@ namespace Game.CardEffects
                 
                 case GadgetTargets.FarLeft:
                     gadgetTargetText = startSentence ? "To the most left" : "to the most left";
+                    break;
+                
+                default:
+                    gadgetTargetText = "<color=red>PLACEHOLDER</color>";
                     break;
             }
 

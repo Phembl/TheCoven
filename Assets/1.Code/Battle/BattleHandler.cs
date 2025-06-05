@@ -10,14 +10,14 @@ using Game.CardEffects;
 using Game.Global;
 using TMPro;
 
-public class BattleManager : MonoBehaviour
+public class BattleHandler : MonoBehaviour
 {
     //Enemy
     public int currentEnemyHealth;
     public int currentDeckSize;
     public int currentExhaustSize;
     
-    public static BattleManager instance;
+    public static BattleHandler instance;
     
     [Tab("Battle")]
     public GameObject currentEnemy;
@@ -25,7 +25,7 @@ public class BattleManager : MonoBehaviour
     [EndTab]
     
     [Tab("Hand")]
-    public float delayBetweenDraws = 0.1f; // Delay between consecutive draws
+    public float delayBetweenDraws = 0.1f * Global.timeMult; // Delay between consecutive draws
     [EndTab] 
     
     [Tab("Settings")]
@@ -47,11 +47,9 @@ public class BattleManager : MonoBehaviour
     public TextMeshProUGUI enemyNameText;
     public TextMeshProUGUI deckSizeText;
     public TextMeshProUGUI exhaustSizeText;
-    [EndTab]
-
+    [EndTab] 
     
-    
-    
+    private float timeMult = Global.timeMult;
     
     
     private void Awake()
@@ -105,6 +103,9 @@ public class BattleManager : MonoBehaviour
     
 #endregion ------------Battle Setup------------//
     
+
+#region ------------Board Resolve------------//
+    
     public void ResolveButtonIsPressed()
     {
         StartCoroutine(ResolveArena());
@@ -114,14 +115,13 @@ public class BattleManager : MonoBehaviour
     {
         Debug.Log("Resolving Effects");
         yield return StartCoroutine(ResolveEffects());
-        yield return new WaitForSeconds(0.2f * Global.timeMult);
+        yield return new WaitForSeconds(0.2f * timeMult);
         yield return StartCoroutine(ResolvePower());
-        yield return new WaitForSeconds(0.2f * Global.timeMult);
+        yield return new WaitForSeconds(0.2f * timeMult);
         yield return StartCoroutine(ExhaustCards());
 
 
     }
-    #region ------------Board Resolve------------//
     
     private IEnumerator ResolveEffects()
     {
@@ -140,7 +140,7 @@ public class BattleManager : MonoBehaviour
                 foreach (Effect effect in nextCardEffects)
                 {
                     yield return StartCoroutine(effect.DoEffect(boardID));
-                    yield return new WaitForSeconds(0.5f * Global.timeMult);
+                    yield return new WaitForSeconds(0.5f * timeMult);
                 }
                 
             }
@@ -148,7 +148,7 @@ public class BattleManager : MonoBehaviour
             else
             {
                 Debug.Log("No effect");
-                yield return new WaitForSeconds(0.2f * Global.timeMult);
+                yield return new WaitForSeconds(0.2f * timeMult);
             }
             
             //Finish Up Card
@@ -189,26 +189,28 @@ public class BattleManager : MonoBehaviour
             if (currentEnemyHealth <= 0) WinBattle();
             
             
-            yield return new WaitForSeconds(0.5f * Global.timeMult);
+            yield return new WaitForSeconds(0.5f * timeMult);
         }
     }
 
     private IEnumerator ExhaustCards()
     {
+        Debug.Log(arenaCardHolder.childCount);
+        
         foreach (Transform nextCard in arenaCardHolder)
         {
             StartCoroutine(nextCard.GetComponent<Card>().AnimateCard(CardAnimations.Exhaust));
-            yield return new WaitForSeconds(0.2f * Global.timeMult);
-            currentExhaustSize++;
-            exhaustSizeText.text = currentExhaustSize.ToString();
             
+            UpdateCounter(BattleCounters.Exhaust, 1);
+            
+            yield return new WaitForSeconds(0.5f * timeMult);
         }
       
     }
     
-    #endregion ------------Board Resolve------------//
+#endregion ------------Board Resolve------------//
     
-    #region ------------Battle States------------//
+#region ------------Battle States------------//
 
     public void UpdateCounter(BattleCounters counter, int changeValue)
     {

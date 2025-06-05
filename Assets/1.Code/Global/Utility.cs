@@ -11,24 +11,25 @@ namespace Game.Global
     { 
     
     //Constants
-    private const float CARD_WIDTH = 400f;
-    private const float HAND_CARDSPACING = 25f;
-    private const float ARENA_CARDSPACING= 25f;
-    private const int CARD_ORDER_BASE = 500;
+    public const float CARD_WIDTH = 400f;
+    public const float HAND_CARDSPACING = 25f;
+    public const float ARENA_CARDSPACING= 25f;
+    public const int CARD_ORDER_BASE = 500;
         
     //Card Container
-    private static Transform handCardHolder = BattleManager.instance.handCardHolder;
-    private static Transform deckCardHolder = BattleManager.instance.deckCardHolder;
-    private static Transform arenaCardHolder = BattleManager.instance.arenaCardHolder;
-    private static Transform exhaustCardHolder = BattleManager.instance.exhaustCardHolder;
+    public static Transform handCardHolder = BattleHandler.instance.handCardHolder;
+    public static Transform deckCardHolder = BattleHandler.instance.deckCardHolder;
+    public static Transform arenaCardHolder = BattleHandler.instance.arenaCardHolder;
+    public static Transform exhaustCardHolder = BattleHandler.instance.exhaustCardHolder;
     
     //Hand Settings
-    private static Transform deckIcon = BattleManager.instance.deckIcon;
-    private static float cardDrawDelayBetweenCards = BattleManager.instance.delayBetweenDraws * Global.timeMult;
-    private static BoxCollider2D handBounds = BattleManager.instance.handBounds;
+    private static Transform deckIcon = BattleHandler.instance.deckIcon;
+    private static float cardDrawDelayBetweenCards = BattleHandler.instance.delayBetweenDraws * Global.timeMult;
+    private static BoxCollider2D handBounds = BattleHandler.instance.handBounds;
     
     //Arena Settings
-    private static BoxCollider2D arenaBounds = BattleManager.instance.arenaBounds;
+    public static BoxCollider2D arenaBounds = BattleHandler.instance.arenaBounds;
+      
       
  
 
@@ -94,7 +95,7 @@ namespace Game.Global
             // Move the card to its position in hand
             nextCard.GetComponent<Card>().MoveCard(targetPosition,CardLocations.Hand, false);
 
-            BattleManager.instance.UpdateCounter(BattleCounters.Deck, -1);
+            BattleHandler.instance.UpdateCounter(BattleCounters.Deck, -1);
             
             // Wait before drawing next card for visual clarity
             yield return new WaitForSeconds(cardDrawDelayBetweenCards);
@@ -133,6 +134,7 @@ namespace Game.Global
         // Interpolate between min and max duration
         float duration = Mathf.Lerp(minDuration, maxDuration, normalizedValue);
 
+        duration *= Global.timeMult;
         return duration;
     }
     
@@ -140,7 +142,7 @@ namespace Game.Global
     /// This calculates the positions of all cards in a given area.
     /// It will automatically return overlapping positions if the area is not wide enough for all cards.
     /// </summary>
-    private static float[] CalculateCardPositions(int totalCards, float cardAreaWidth, float cardSpacing)
+    public static float[] CalculateCardPositions(int totalCards, float cardAreaWidth, float cardSpacing)
     {
         float[] positions = new float[totalCards];
     
@@ -177,7 +179,7 @@ namespace Game.Global
         return positions;
     }
     
-    public static void UpdateCardPositions(CardLocations location, bool animate = true)
+    public static void UpdateCardPositions(CardLocations location)
     {
         Transform cardHolder = null;
         float areaWidth = 0;
@@ -202,22 +204,20 @@ namespace Game.Global
         float[] cardPositions = CalculateCardPositions(cardsInHand, areaWidth, HAND_CARDSPACING);
         
         // Update position of each card
-        for (int i = 0; i < cardsInHand; i++)
+        int nextPosIndex = 0;
+        foreach (Transform nextCard in cardHolder)
         {
-           
-            Transform nextCard = cardHolder.GetChild(i);
-            if (animate)
-            {
-                // Animate to new position
-                nextCard.DOMoveX(cardPositions[i], cardDrawDelayBetweenCards).SetEase(Ease.OutQuint);
-            }
-            else
-            {
-                // Instantly set new position
-                Vector3 pos = nextCard.position;
-                pos.x = cardPositions[i];
-                nextCard.position = pos;
-            }
+
+            Vector3 nextPos = new Vector3(cardPositions[nextPosIndex], nextCard.transform.position.y, nextCard.transform.position.z);
+            nextCard.DOMove
+            (
+                nextPos, 
+                CalculateCardMoveDuration(nextPos, nextCard)
+            )
+                .SetEase(Ease.OutQuint);
+            
+            nextPosIndex++;
+ 
         }
         UpdateCardOrder(cardHolder);
     } 
@@ -229,7 +229,6 @@ namespace Game.Global
     {
         for (int i = 0; i < cardHolder.childCount; i++)
         {
-            
             Transform nextCard = cardHolder.GetChild(i);
             float nextCardZ = 0 + i;
             nextCard.transform.position = new Vector3(nextCard.transform.position.x, nextCard.transform.position.y, nextCardZ);
@@ -240,39 +239,6 @@ namespace Game.Global
 #endregion ---------------Card Utils----------//
     
 #region ------------Arena Utils------------//
-
-public static Vector3 GetArenaCardPosition(int direction)
-{
-    float battlefieldYOffset = arenaBounds.offset.y;
-    float cardXOffset = CARD_WIDTH + ARENA_CARDSPACING;
-        
-    Vector3 newPosition = new Vector3(0, battlefieldYOffset, 0);
-        
-    int childCount = arenaCardHolder.childCount;
-    List<float> cardXPosition = new List<float>();
-        
-    if  (childCount > 0)
-    {
-        foreach (Transform child in arenaCardHolder)
-        {
-            float nextCardX = child.transform.position.x;
-            cardXPosition.Add(nextCardX);
-        }
-
-        if (direction > 0)
-        {
-            float newCardX = cardXPosition.Max() + cardXOffset;
-            newPosition.x = newCardX;
-                
-        }
-        else
-        {
-            float newCardX = cardXPosition.Min() - cardXOffset;
-            newPosition.x = newCardX;
-        }
-    }
-    return newPosition;
-}
 
 public static void AddCardToArena(GameObject card)
 {
@@ -295,8 +261,6 @@ public static void AddCardToArena(GameObject card)
     }
     
     UpdateCardPositions(CardLocations.Arena);
-    //Do this for Z order
-    //UpdateCardOrder(arenaCardHolder);
         
     }
 

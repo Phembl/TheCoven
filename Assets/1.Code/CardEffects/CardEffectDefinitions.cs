@@ -1,5 +1,6 @@
 using System.Text;
 using UnityEngine;
+using Game.Global;
 
 namespace Game.CardEffects
 {
@@ -42,12 +43,14 @@ namespace Game.CardEffects
     {
         public CardEffectTypes cardEffectType;
         public CardEffectTargets cardEffectTarget;
+        public GameObject gadget;
         public GadgetTargets gadgetTarget;
         public string gadgetName;
         public int cardEffectStrength;
         public int cardEffectUserBoardID;
         public int cardEffectRepeatCount;
     }
+    
     
 }
 

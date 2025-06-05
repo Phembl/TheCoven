@@ -74,7 +74,7 @@ public class Character : MonoBehaviour
         currentPower = basePower;
         InitializeCharacter();
         
-        float asdf = 1f * Global.timeMult;
+        float waitAfterEffect = 0.2f * Global.timeMult;
     }
 
     void InitializeCharacter()

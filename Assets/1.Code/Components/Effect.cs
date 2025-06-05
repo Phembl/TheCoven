@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using VInspector;
 using Game.CardEffects;
+using Game.Global;
 
 public class Effect : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class Effect : MonoBehaviour
     private CardEffectTypes cardEffectType;
     private CardEffectTargets cardEffectTarget;
     private CardEffectData cardEffectData;
+    
+    private GameObject newGadget;
     
     [Header("Effect Settings")]
     [Tooltip("The type of effect this card has.")]
@@ -38,19 +41,19 @@ public class Effect : MonoBehaviour
     [SerializeField] private int repeatCount;
 
     [EndIf]
-    private void Awake()
+ 
+    
+    public void InitializeCardEffect()
     {
+        cardEffectType = effect;
+        
         if (!repeat) repeatCount = 0;
+        
         if (cardEffectType != CardEffectTypes.Tinker)
         {
             gadgetName = "";
             gadgetTarget = GadgetTargets.None;
         }
-    }
-    
-    public void InitializeCardEffect()
-    {
-        cardEffectType = effect;
         
         switch (cardEffectType)
         {
@@ -66,8 +69,15 @@ public class Effect : MonoBehaviour
             
             case CardEffectTypes.Tinker:
                 cardEffectStrength = 0;
-                gadgetName = gadgetPrefab.name;
+                gadgetName = gadgetPrefab.GetComponent<Gadget>().title;
                 cardEffectTarget = CardEffectTargets.None;
+                Vector3 newGadgetPos = new Vector3(-3000,0,0);
+                newGadget = Instantiate
+                    (
+                        gadgetPrefab, 
+                        newGadgetPos, 
+                        Quaternion.identity
+                    );
                 break;
             
         }
@@ -81,6 +91,7 @@ public class Effect : MonoBehaviour
         {
             cardEffectType = this.cardEffectType,
             cardEffectTarget = this.cardEffectTarget,
+            gadget = newGadget,
             gadgetTarget = this.gadgetTarget,
             gadgetName = this.gadgetName,
             cardEffectStrength = this.cardEffectStrength,
@@ -105,18 +116,8 @@ public class Effect : MonoBehaviour
         {
             
             yield return StartCoroutine
-                (CardEffects.DoEffect(cardEffectData));
+                (CardEffectHandler.instance.DoEffect(cardEffectData));
         }
     }
-
-
     
-    /*
-    protected string ConstructTinkerTargetText()
-    {
-        string effectTargetText = ""; 
-        
-        return effectTargetText;
-    }
-    */
 }

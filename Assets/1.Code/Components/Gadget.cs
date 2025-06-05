@@ -14,7 +14,7 @@ public class Gadget : MonoBehaviour
     [Tab("Properties")]
     [Header("Character Values")]
     [SerializeField] private int ID;
-    [SerializeField] private string title;
+    public string title;
     [SerializeField] private Sprite image;
     [Space]
     [SerializeField] private int basePower;

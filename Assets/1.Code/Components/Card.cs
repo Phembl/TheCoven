@@ -56,6 +56,8 @@ public class Card : MonoBehaviour
     {
         cardCanvas = transform.GetChild(0).GetComponent<Canvas>();
         cam = Camera.main;
+        
+        float waitAfterEffect = 0.2f * Global.timeMult;
     }
     
     #region ------------Card Mouse Interactions------------//
@@ -128,19 +130,36 @@ public class Card : MonoBehaviour
         
         if (rayHit)
         {
-            Vector3 nextCardPos = new Vector3(0,0,0);
+            //This is the center of the arena
+            Vector3 nextCardPos = new Vector3(0,Utility.arenaBounds.offset.y,0);
+            int nextCardSiblingIndex = 0;
             
-            if (Input.mousePosition.x < Screen.width / 2) //Battlefield left
+          
+            if (Utility.arenaCardHolder.childCount != 0)
             {
-                Debug.Log("Dropping Card to Battlefield left");
-                nextCardPos = Utility.GetArenaCardPosition(-1);
-            }
-            else //Battlefield right
-            {
-                Debug.Log("Dropping Card to Battlefield right");
-                nextCardPos = Utility.GetArenaCardPosition(1);
+                float[] arenaPositions = Utility.CalculateCardPositions
+                (
+                    Utility.arenaCardHolder.childCount + 1,
+                    Utility.arenaBounds.size.x,
+                    Utility.ARENA_CARDSPACING
+                );
+                
+                if (Input.mousePosition.x < Screen.width / 2) //Battlefield left
+                {
+                    Debug.Log("Dropping Card to Battlefield left");
+                    nextCardPos.x = arenaPositions[0];
+                    nextCardSiblingIndex = 0;
+                }
+                else //Battlefield right
+                {
+                    Debug.Log("Dropping Card to Battlefield right");
+                    nextCardPos.x = arenaPositions[^1];
+                    nextCardSiblingIndex = arenaPositions.Length - 1;
+                }
             }
             
+            transform.SetParent(Utility.arenaCardHolder);
+            transform.SetSiblingIndex(nextCardSiblingIndex);
             MoveCard(nextCardPos, CardLocations.Arena);
             
 
@@ -236,14 +255,21 @@ public class Card : MonoBehaviour
     
     #region ------------Card Helper------------//
     
-    public void MoveCard(Vector3 targetPosition, CardLocations targetLocation, bool fromDrag = true)
+    public void MoveCard
+        (
+            Vector3 targetPosition, 
+            CardLocations targetLocation, 
+            bool fromHand = true
+        )
     {
         currentState = CardStates.moving;
        
-        transform.DOMove(
+        transform.DOMove
+            (
                 targetPosition, 
-                Utility.CalculateCardMoveDuration(targetPosition, transform) * Global.timeMult)
-            .SetEase(Ease.OutBack)
+                Utility.CalculateCardMoveDuration(targetPosition, transform)
+            )
+            .SetEase(Ease.OutQuad)
             .OnComplete(() =>
             {
                 currentState = CardStates.resting;
@@ -252,13 +278,14 @@ public class Card : MonoBehaviour
                 switch (targetLocation)
                 {
                     case CardLocations.Hand: 
-                        if (fromDrag) cardCanvas.sortingOrder = originalSortingOrder;
+                        if (fromHand) cardCanvas.sortingOrder = originalSortingOrder;
                         break;
                     
                     case CardLocations.Arena: 
                         //cardCanvas.sortingOrder = originalSortingOrder;
-                        Utility.AddCardToArena(gameObject);
-                        Utility.UpdateCardPositions(CardLocations.Hand);
+                        //Utility.AddCardToArena(gameObject);
+                        Utility.UpdateCardPositions(CardLocations.Arena);
+                        if (fromHand) Utility.UpdateCardPositions(CardLocations.Hand);
                         break;
                     
                     case CardLocations.Exhaust:

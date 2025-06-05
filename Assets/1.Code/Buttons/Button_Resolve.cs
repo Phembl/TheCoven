@@ -16,7 +16,7 @@ public class Button_Resolve : MonoBehaviour
         {
             isInactive = true;
 
-            BattleManager.instance.ResolveButtonIsPressed();
+            BattleHandler.instance.ResolveButtonIsPressed();
         }
     }
 }
