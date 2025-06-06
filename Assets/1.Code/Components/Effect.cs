@@ -117,6 +117,8 @@ public class Effect : MonoBehaviour
             
             yield return StartCoroutine
                 (CardEffectHandler.instance.DoEffect(cardEffectData));
+
+            yield return new WaitForSeconds(0.7f * Global.timeMult);
         }
     }
     

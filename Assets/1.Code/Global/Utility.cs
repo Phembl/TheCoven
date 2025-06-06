@@ -17,12 +17,12 @@ namespace Game.Global
     public const int CARD_ORDER_BASE = 500;
     
     //Hand Settings
-    private static Transform deckIcon = BattleHandler.instance.deckIcon;
-    private static float cardDrawDelayBetweenCards = BattleHandler.instance.delayBetweenDraws * Global.timeMult;
-    private static BoxCollider2D handBounds = BattleHandler.instance.handBounds;
+    private static BoxCollider2D handBounds => 
+        BattleHandler.instance?.handBounds;
     
     //Arena Settings
-    public static BoxCollider2D arenaBounds = BattleHandler.instance.arenaBounds;
+    public static BoxCollider2D arenaBounds => 
+        BattleHandler.instance?.arenaBounds;
       
       
  
@@ -75,7 +75,7 @@ namespace Game.Global
 
             // Set parent to hand container
             nextCard.SetParent(Global.handCardHolder);
-            UpdateCardOrder(Global.handCardHolder);
+            UpdateCardOrder(CardLocations.Hand, false);
             
             int newCardPositionIndex = cardsInHand + i;
 
@@ -83,7 +83,7 @@ namespace Game.Global
             float targetX = newPositions[newCardPositionIndex];
             Vector3 targetPosition = new Vector3(targetX, handBounds.offset.y, nextCard.position.z);
             
-            // Move next card to draw Position
+            // Move next card to draw Position under the final hand pos
             nextCard.position = new Vector3(targetPosition.x, targetPosition.y - 500, targetPosition.z);
 
             // Move the card to its position in hand
@@ -92,7 +92,7 @@ namespace Game.Global
             BattleHandler.instance.UpdateCounter(BattleCounters.Deck, -1);
             
             // Wait before drawing next card for visual clarity
-            yield return new WaitForSeconds(cardDrawDelayBetweenCards);
+            yield return new WaitForSeconds(0.2f * Global.timeMult);
         }
         
         
@@ -191,11 +191,13 @@ namespace Game.Global
                 break;
                 
         }
+        
         // Get current number of cards to Update
         int cardsToUpdate = cardHolder.childCount;
         
         // Calculate positions for all cards
-        float[] cardPositions = CalculateCardPositions(cardsToUpdate, areaWidth, HAND_CARDSPACING);
+        float[] cardPositions = CalculateCardPositions
+            (cardsToUpdate, areaWidth, HAND_CARDSPACING);
         
         // Update position of each card
         int nextPosIndex = 0;
@@ -213,27 +215,64 @@ namespace Game.Global
             nextPosIndex++;
  
         }
-        UpdateCardOrder(cardHolder);
+        //UpdateCardOrder(cardHolder);
     } 
     
     /// <summary>
     /// This function sets the Z order and Sorting order of all cards in given container according to their sibling index.
     /// </summary>
-    private static void UpdateCardOrder(Transform cardHolder)
+    public static void UpdateCardOrder(CardLocations location, bool updatePositions = true)
     {
+    Transform cardHolder = null;
+    
+      switch (location)
+      {
+          case CardLocations.Hand:
+              cardHolder = Global.handCardHolder;
+              //areaWidth = handBounds.size.x;
+              break;
+            
+          case CardLocations.Arena:
+              cardHolder = Global.arenaCardHolder;
+              //areaWidth = arenaBounds.size.x;
+              break;
+                
+      }
+        if (cardHolder == Global.arenaCardHolder) 
+            Debug.Log("------STARTING Z ORDERING IN ARENA-----");
+        
+        if (cardHolder == Global.handCardHolder) 
+            Debug.Log("------STARTING Z ORDERING IN HAND-----");
+        
         for (int i = 0; i < cardHolder.childCount; i++)
         {
             Transform nextCard = cardHolder.GetChild(i);
             float nextCardZ = 0 + i;
-            nextCard.transform.position = new Vector3(nextCard.transform.position.x, nextCard.transform.position.y, nextCardZ);
-            nextCard.transform.GetChild(0).GetComponent<Canvas>().sortingOrder = CARD_ORDER_BASE - i;
+            
+            nextCard.transform.localScale = new Vector3(1, 1, 1);
+            
+            if (cardHolder == Global.arenaCardHolder) 
+                Debug.Log($"Next Card Z: {nextCardZ}");
+            
+            nextCard.transform.position = new Vector3
+                (
+                    nextCard.transform.position.x, 
+                    nextCard.transform.position.y, 
+                    nextCardZ
+                );
+            
+            nextCard.transform.GetChild(0).
+                GetComponent<Canvas>().sortingOrder = CARD_ORDER_BASE - i;
         }
+        
+        if (updatePositions) UpdateCardPositions(location);
     }
     
 #endregion ---------------Card Utils----------//
     
 #region ------------Arena Utils------------//
 
+/*
 public static void AddCardToArena(GameObject card)
 {
     //This is called from the card when it is dropped to the battlefield
@@ -257,6 +296,7 @@ public static void AddCardToArena(GameObject card)
     UpdateCardPositions(CardLocations.Arena);
         
     }
+    */
 
 
 

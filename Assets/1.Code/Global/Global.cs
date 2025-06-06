@@ -19,7 +19,7 @@ namespace Game.Global
         ResolveStart,
         ResolveEnd,
         Exhaust,
-        Appear
+        Appear,
     }
 
     public enum BattleCounters

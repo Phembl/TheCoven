@@ -113,9 +113,9 @@ public class BattleHandler : MonoBehaviour
     
     private IEnumerator ResolveArena() 
     {
-        Debug.Log("Resolving Effects");
-        yield return StartCoroutine(ResolveEffects());
-        yield return new WaitForSeconds(0.2f * timeMult);
+        
+        //yield return StartCoroutine(ResolveEffects());
+       // yield return new WaitForSeconds(0.2f * timeMult);
         yield return StartCoroutine(ResolvePower());
         yield return new WaitForSeconds(0.2f * timeMult);
         yield return StartCoroutine(ExhaustCards());
@@ -123,7 +123,7 @@ public class BattleHandler : MonoBehaviour
 
     }
     
-    private IEnumerator ResolveEffects()
+    private IEnumerator ResolveEffects() // Is moved to Card
     {
         foreach (Transform nextCard in arenaCardHolder)
         {
@@ -142,7 +142,6 @@ public class BattleHandler : MonoBehaviour
                     yield return StartCoroutine(effect.DoEffect(boardID));
                     yield return new WaitForSeconds(0.5f * timeMult);
                 }
-                
             }
             
             else
@@ -203,7 +202,7 @@ public class BattleHandler : MonoBehaviour
             
             UpdateCounter(BattleCounters.Exhaust, 1);
             
-            yield return new WaitForSeconds(0.5f * timeMult);
+            yield return new WaitForSeconds(0.4f * timeMult);
         }
 
         foreach (Transform nextCard in arenaCardHolder)

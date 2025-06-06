@@ -36,7 +36,9 @@ public class Card : MonoBehaviour
         resting,
         hovering,
         dragged,
-        moving
+        moving,
+        resolving,
+        animating
     }
     [ShowInInspector, ReadOnly]
     private CardLocations currentLocation = CardLocations.Deck;
@@ -45,6 +47,7 @@ public class Card : MonoBehaviour
     
     private int originalSortingOrder;
     private Coroutine resetOrderCoroutine;
+    private Tween cardMove;
     
     //Object variables
     private Canvas cardCanvas;
@@ -86,7 +89,8 @@ public class Card : MonoBehaviour
         //cardCanvas.sortingOrder = originalSortingOrder;
         cardCanvas.sortingOrder = ORDER_HOVERING - (transform.GetSiblingIndex() + 1);
         
-        if (hoverScaleTween != null) transform.DOKill(true);
+        if (hoverScaleTween != null) hoverScaleTween.Kill();
+        
         hoverScaleTween = transform.DOScale(1, scaleTweenTime).SetEase(Ease.OutQuad);
         resetOrderCoroutine = StartCoroutine(ResetOrder(scaleTweenTime));
 
@@ -146,6 +150,8 @@ public class Card : MonoBehaviour
     
     public IEnumerator AnimateCard(CardAnimations animation)
     {
+        currentState = CardStates.animating;
+        
         switch (animation)
         {
             case CardAnimations.Attack:
@@ -172,6 +178,8 @@ public class Card : MonoBehaviour
                 yield return StartCoroutine(AnimateCardAppear());
                 break;
         }
+        
+        currentState = CardStates.resting;
         
         
     }
@@ -237,10 +245,38 @@ public class Card : MonoBehaviour
     
     #region ------------Card Helper------------//
 
+    public IEnumerator ResolveCardEffects()
+    {
+        // Get all Effect components and resolves them
+        Effect[] nextCardEffects = GetComponents<Effect>();
+        if (nextCardEffects.Length > 0)
+        {
+            currentState = CardStates.resolving;
+            //Animate Card
+            yield return StartCoroutine
+                (AnimateCard(CardAnimations.ResolveStart));
+            
+            int boardID = transform.GetSiblingIndex();
+            foreach (Effect effect in nextCardEffects)
+            {
+                yield return StartCoroutine(effect.DoEffect(boardID));
+                yield return new WaitForSeconds(0.5f * Global.timeMult);
+            }
+            
+            //Finish Up Card
+            yield return StartCoroutine
+                (AnimateCard(CardAnimations.ResolveEnd));
+            
+            currentState = CardStates.resting;
+        }
+    }
+    
+    
     private IEnumerator DropCardBackToHand()
     {
         yield return StartCoroutine (MoveCard(startPosition, CardLocations.Hand));
         cardCanvas.sortingOrder = originalSortingOrder;
+        
     }
     
     private IEnumerator DropCardToArena()
@@ -277,23 +313,31 @@ public class Card : MonoBehaviour
         transform.SetSiblingIndex(nextCardSiblingIndex);
         
         //Move Card to the Arena
-        yield return StartCoroutine(MoveCard(nextCardPos, CardLocations.Arena));
+        yield return StartCoroutine
+            (MoveCard(nextCardPos, CardLocations.Arena));
         
-        Utility.UpdateCardPositions(CardLocations.Arena);
-        Utility.UpdateCardPositions(CardLocations.Hand);
+        if (cardMove != null) cardMove.Kill();
+        
+        yield return new WaitForSeconds(0.1f);
+        Utility.UpdateCardOrder(CardLocations.Arena);
+        Utility.UpdateCardOrder(CardLocations.Hand);
+        
+        yield return new WaitForSeconds(0.5f * Global.timeMult);
+        
+        StartCoroutine(ResolveCardEffects());
     }
     
     public IEnumerator MoveCard
         (
             Vector3 targetPosition, 
-            CardLocations targetLocation, 
-            bool fromHand = true
+            CardLocations targetLocation
         )
     {
         currentState = CardStates.moving;
         float cardMoveTime = Utility.CalculateCardMoveDuration(targetPosition, transform);
 
-        transform.DOMove(targetPosition, cardMoveTime).SetEase(Ease.OutQuad);
+        if (cardMove != null) cardMove.Kill();
+        cardMove = transform.DOMove(targetPosition, cardMoveTime).SetEase(Ease.OutQuad);
             
         yield return new WaitForSeconds(cardMoveTime);
             
@@ -309,7 +353,8 @@ public class Card : MonoBehaviour
     {
         currentState = CardStates.moving;
 
-        transform.DOMove
+        if (cardMove != null) cardMove.Kill();
+        cardMove = transform.DOMove
             (
                 targetPosition,
                 Utility.CalculateCardMoveDuration(targetPosition, transform)
