@@ -130,43 +130,11 @@ public class Card : MonoBehaviour
         
         if (rayHit)
         {
-            //This is the center of the arena
-            Vector3 nextCardPos = new Vector3(0,Utility.arenaBounds.offset.y,0);
-            int nextCardSiblingIndex = 0;
-            
-          
-            if (Utility.arenaCardHolder.childCount != 0)
-            {
-                float[] arenaPositions = Utility.CalculateCardPositions
-                (
-                    Utility.arenaCardHolder.childCount + 1,
-                    Utility.arenaBounds.size.x,
-                    Utility.ARENA_CARDSPACING
-                );
-                
-                if (Input.mousePosition.x < Screen.width / 2) //Battlefield left
-                {
-                    Debug.Log("Dropping Card to Battlefield left");
-                    nextCardPos.x = arenaPositions[0];
-                    nextCardSiblingIndex = 0;
-                }
-                else //Battlefield right
-                {
-                    Debug.Log("Dropping Card to Battlefield right");
-                    nextCardPos.x = arenaPositions[^1];
-                    nextCardSiblingIndex = arenaPositions.Length - 1;
-                }
-            }
-            
-            transform.SetParent(Utility.arenaCardHolder);
-            transform.SetSiblingIndex(nextCardSiblingIndex);
-            MoveCard(nextCardPos, CardLocations.Arena);
-            
-
+            StartCoroutine(DropCardToArena());
         }
         else
         {
-            MoveCard(startPosition, CardLocations.Hand);
+            StartCoroutine(DropCardBackToHand());
         }
         
         
@@ -198,6 +166,10 @@ public class Card : MonoBehaviour
             
             case CardAnimations.Exhaust:
                 yield return StartCoroutine(AnimateCardExhaust());
+                break;
+            
+            case CardAnimations.Appear:
+                yield return StartCoroutine(AnimateCardAppear());
                 break;
         }
         
@@ -242,11 +214,21 @@ public class Card : MonoBehaviour
 
     private IEnumerator AnimateCardExhaust()
     {
+        Debug.Log("Card Animation Exhaust");
         float animationTime = 0.4f * Global.timeMult;
         
         cardCanvas.GetComponent<CanvasGroup>().DOFade(0, animationTime);
         yield return new WaitForSeconds(animationTime);
-        Utility.AddCardToExhaust(gameObject);
+        
+       
+    }
+    
+    private IEnumerator AnimateCardAppear()
+    {
+        float animationTime = 0.4f * Global.timeMult;
+        
+        cardCanvas.GetComponent<CanvasGroup>().DOFade(1, animationTime);
+        yield return new WaitForSeconds(animationTime);
        
     }
 
@@ -254,8 +236,54 @@ public class Card : MonoBehaviour
     #endregion ------------Card Animations------------//
     
     #region ------------Card Helper------------//
+
+    private IEnumerator DropCardBackToHand()
+    {
+        yield return StartCoroutine (MoveCard(startPosition, CardLocations.Hand));
+        cardCanvas.sortingOrder = originalSortingOrder;
+    }
     
-    public void MoveCard
+    private IEnumerator DropCardToArena()
+    {
+        //This is the center of the arena
+        Vector3 nextCardPos = new Vector3(0,Utility.arenaBounds.offset.y,0);
+        int nextCardSiblingIndex = 0;
+        
+        //If this is the first card to drop use middle pos
+        if (Global.arenaCardHolder.childCount != 0)
+        {
+            float[] arenaPositions = Utility.CalculateCardPositions
+            (
+                Global.arenaCardHolder.childCount + 1,
+                Utility.arenaBounds.size.x,
+                Utility.ARENA_CARDSPACING
+            );
+                
+            if (Input.mousePosition.x < Screen.width / 2) //Battlefield left
+            {
+                Debug.Log("Dropping Card to Battlefield left");
+                nextCardPos.x = arenaPositions[0];
+                nextCardSiblingIndex = 0;
+            }
+            else //Battlefield right
+            {
+                Debug.Log("Dropping Card to Battlefield right");
+                nextCardPos.x = arenaPositions[^1];
+                nextCardSiblingIndex = arenaPositions.Length - 1;
+            }
+        }
+            
+        transform.SetParent(Global.arenaCardHolder);
+        transform.SetSiblingIndex(nextCardSiblingIndex);
+        
+        //Move Card to the Arena
+        yield return StartCoroutine(MoveCard(nextCardPos, CardLocations.Arena));
+        
+        Utility.UpdateCardPositions(CardLocations.Arena);
+        Utility.UpdateCardPositions(CardLocations.Hand);
+    }
+    
+    public IEnumerator MoveCard
         (
             Vector3 targetPosition, 
             CardLocations targetLocation, 
@@ -263,10 +291,27 @@ public class Card : MonoBehaviour
         )
     {
         currentState = CardStates.moving;
-       
+        float cardMoveTime = Utility.CalculateCardMoveDuration(targetPosition, transform);
+
+        transform.DOMove(targetPosition, cardMoveTime).SetEase(Ease.OutQuad);
+            
+        yield return new WaitForSeconds(cardMoveTime);
+            
+        currentState = CardStates.resting;
+        currentLocation = targetLocation;
+    }
+
+    public void MoveCardNoWait
+        (
+            Vector3 targetPosition,
+            CardLocations targetLocation
+        )
+    {
+        currentState = CardStates.moving;
+
         transform.DOMove
             (
-                targetPosition, 
+                targetPosition,
                 Utility.CalculateCardMoveDuration(targetPosition, transform)
             )
             .SetEase(Ease.OutQuad)
@@ -274,25 +319,6 @@ public class Card : MonoBehaviour
             {
                 currentState = CardStates.resting;
                 currentLocation = targetLocation;
-                
-                switch (targetLocation)
-                {
-                    case CardLocations.Hand: 
-                        if (fromHand) cardCanvas.sortingOrder = originalSortingOrder;
-                        break;
-                    
-                    case CardLocations.Arena: 
-                        //cardCanvas.sortingOrder = originalSortingOrder;
-                        //Utility.AddCardToArena(gameObject);
-                        Utility.UpdateCardPositions(CardLocations.Arena);
-                        if (fromHand) Utility.UpdateCardPositions(CardLocations.Hand);
-                        break;
-                    
-                    case CardLocations.Exhaust:
-                        Utility.AddCardToExhaust(gameObject);
-                        break;
-                }
-               
             });
     }
     

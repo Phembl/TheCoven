@@ -18,7 +18,8 @@ namespace Game.Global
         UpdatePower,
         ResolveStart,
         ResolveEnd,
-        Exhaust
+        Exhaust,
+        Appear
     }
 
     public enum BattleCounters
@@ -57,6 +58,19 @@ namespace Game.Global
     
     public static class Global
     {
+        //Card Container
+        public static Transform handCardHolder => 
+            BattleHandler.instance?.handCardHolder;
+        
+        public static Transform deckCardHolder => 
+            BattleHandler.instance?.deckCardHolder;
+        
+        public static Transform arenaCardHolder => 
+            BattleHandler.instance?.arenaCardHolder;
+        
+        public static Transform exhaustCardHolder => 
+            BattleHandler.instance?.exhaustCardHolder;
+        
         //Time
         public static float timeMult = 1f;
 

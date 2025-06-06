@@ -13,9 +13,9 @@ using TMPro;
 public class BattleHandler : MonoBehaviour
 {
     //Enemy
-    public int currentEnemyHealth;
-    public int currentDeckSize;
-    public int currentExhaustSize;
+    [HideInInspector] public int currentEnemyHealth;
+    [HideInInspector] public int currentDeckSize;
+    [HideInInspector] public int currentExhaustSize;
     
     public static BattleHandler instance;
     
@@ -204,6 +204,11 @@ public class BattleHandler : MonoBehaviour
             UpdateCounter(BattleCounters.Exhaust, 1);
             
             yield return new WaitForSeconds(0.5f * timeMult);
+        }
+
+        foreach (Transform nextCard in arenaCardHolder)
+        {
+            Utility.AddCardToExhaust(nextCard.gameObject);
         }
       
     }

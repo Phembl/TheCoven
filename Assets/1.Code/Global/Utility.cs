@@ -15,12 +15,6 @@ namespace Game.Global
     public const float HAND_CARDSPACING = 25f;
     public const float ARENA_CARDSPACING= 25f;
     public const int CARD_ORDER_BASE = 500;
-        
-    //Card Container
-    public static Transform handCardHolder = BattleHandler.instance.handCardHolder;
-    public static Transform deckCardHolder = BattleHandler.instance.deckCardHolder;
-    public static Transform arenaCardHolder = BattleHandler.instance.arenaCardHolder;
-    public static Transform exhaustCardHolder = BattleHandler.instance.exhaustCardHolder;
     
     //Hand Settings
     private static Transform deckIcon = BattleHandler.instance.deckIcon;
@@ -39,10 +33,10 @@ namespace Game.Global
     {
         Debug.Log($"Drawing {cardsToDraw} Cards");
         // Get current number of cards in hand
-        int cardsInHand = handCardHolder.childCount;
+        int cardsInHand = Global.handCardHolder.childCount;
 
         // Make sure that not more cards can be drawn than are in deck
-        int cardsLeftInDeck = deckCardHolder.childCount;
+        int cardsLeftInDeck = Global.deckCardHolder.childCount;
         if (cardsLeftInDeck < cardsToDraw)
         {
             cardsToDraw = cardsLeftInDeck;
@@ -62,7 +56,7 @@ namespace Game.Global
             // Existing cards maintain their order but shift positions to make room
             for (int i = 0; i < cardsInHand; i++)
             {
-                Transform nextHandCard = handCardHolder.GetChild(0 + i); // Get next Handcard 
+                Transform nextHandCard = Global.handCardHolder.GetChild(0 + i); // Get next Handcard 
                 float nextHandCardMoveX = newPositions[(0 + i)]; // Get the correct X from newPositions list
                 Vector3 nextHandCardTarget = new Vector3(nextHandCardMoveX, nextHandCard.position.y, nextHandCard.position.z);
                 
@@ -76,12 +70,12 @@ namespace Game.Global
         for (int i = 0; i < cardsToDraw; i++)
         {
             // Pick random card from deck
-            int nextCardNr = Random.Range(0, deckCardHolder.childCount);
-            Transform nextCard = deckCardHolder.GetChild(nextCardNr);
+            int nextCardNr = Random.Range(0, Global.deckCardHolder.childCount);
+            Transform nextCard = Global.deckCardHolder.GetChild(nextCardNr);
 
             // Set parent to hand container
-            nextCard.SetParent(handCardHolder);
-            UpdateCardOrder(handCardHolder);
+            nextCard.SetParent(Global.handCardHolder);
+            UpdateCardOrder(Global.handCardHolder);
             
             int newCardPositionIndex = cardsInHand + i;
 
@@ -93,7 +87,7 @@ namespace Game.Global
             nextCard.position = new Vector3(targetPosition.x, targetPosition.y - 500, targetPosition.z);
 
             // Move the card to its position in hand
-            nextCard.GetComponent<Card>().MoveCard(targetPosition,CardLocations.Hand, false);
+            nextCard.GetComponent<Card>().MoveCardNoWait(targetPosition,CardLocations.Hand);
 
             BattleHandler.instance.UpdateCounter(BattleCounters.Deck, -1);
             
@@ -187,21 +181,21 @@ namespace Game.Global
         switch (location)
         {
             case CardLocations.Hand:
-                cardHolder = handCardHolder;
+                cardHolder = Global.handCardHolder;
                 areaWidth = handBounds.size.x;
                 break;
             
             case CardLocations.Arena:
-                cardHolder = arenaCardHolder;
+                cardHolder = Global.arenaCardHolder;
                 areaWidth = arenaBounds.size.x;
                 break;
                 
         }
-        // Get current number of cards in hand
-        int cardsInHand = cardHolder.childCount;
+        // Get current number of cards to Update
+        int cardsToUpdate = cardHolder.childCount;
         
         // Calculate positions for all cards
-        float[] cardPositions = CalculateCardPositions(cardsInHand, areaWidth, HAND_CARDSPACING);
+        float[] cardPositions = CalculateCardPositions(cardsToUpdate, areaWidth, HAND_CARDSPACING);
         
         // Update position of each card
         int nextPosIndex = 0;
@@ -243,7 +237,7 @@ namespace Game.Global
 public static void AddCardToArena(GameObject card)
 {
     //This is called from the card when it is dropped to the battlefield
-    card.transform.SetParent(arenaCardHolder);
+    card.transform.SetParent(Global.arenaCardHolder);
         
     //Prepare Ray to check card order
     Vector2 rayOrigin = new Vector2((((arenaBounds.size.x + 100) / 2) * -1), arenaBounds.offset.y);
@@ -273,7 +267,7 @@ public static void AddCardToArena(GameObject card)
 
     public static void AddCardToExhaust(GameObject card)
     {
-        card.transform.SetParent(exhaustCardHolder);
+        card.transform.SetParent(Global.exhaustCardHolder);
         card.transform.position = new Vector3(3000, 0, 0);
         card.transform.GetChild(0).GetComponent<CanvasGroup>().alpha = 1;
     }
