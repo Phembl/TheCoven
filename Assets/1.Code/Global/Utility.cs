@@ -87,7 +87,7 @@ namespace Game.Global
             nextCard.position = new Vector3(targetPosition.x, targetPosition.y - 500, targetPosition.z);
 
             // Move the card to its position in hand
-            nextCard.GetComponent<Card>().MoveCardNoWait(targetPosition,CardLocations.Hand);
+            yield return nextCard.GetComponent<Card>().MoveCard(targetPosition,CardLocations.Hand);
 
             BattleHandler.instance.UpdateCounter(BattleCounters.Deck, -1);
             
@@ -97,7 +97,6 @@ namespace Game.Global
         
         
     }
-    
     
 #endregion -------------Hand Utils----------//
     
@@ -173,7 +172,58 @@ namespace Game.Global
         return positions;
     }
     
-    public static void UpdateCardPositions(CardLocations location)
+    /// <summary>
+    /// This function sets the Z order and Sorting order of all cards in given container according to their sibling index.
+    /// Optionally uses UpdateCardPositions when finished.
+    /// </summary>
+    public static void UpdateCardOrder(CardLocations location, bool updatePositions = true)
+    {
+    Transform cardHolder = null;
+    
+      switch (location)
+      {
+          case CardLocations.Hand:
+              cardHolder = Global.handCardHolder;
+              //areaWidth = handBounds.size.x;
+              break;
+            
+          case CardLocations.Arena:
+              cardHolder = Global.arenaCardHolder;
+              //areaWidth = arenaBounds.size.x;
+              break;
+                
+      }
+        if (cardHolder == Global.arenaCardHolder) 
+            Debug.Log("------STARTING Z ORDERING IN ARENA-----");
+        
+        if (cardHolder == Global.handCardHolder) 
+            Debug.Log("------STARTING Z ORDERING IN HAND-----");
+        
+        for (int i = 0; i < cardHolder.childCount; i++)
+        {
+            Transform nextCard = cardHolder.GetChild(i);
+            float nextCardZ = 0 + i;
+            
+            //nextCard.transform.localScale = new Vector3(1, 1, 1);
+            
+            if (cardHolder == Global.arenaCardHolder) 
+                Debug.Log($"Next Card Z: {nextCardZ}");
+            
+            nextCard.transform.position = new Vector3
+                (
+                    nextCard.transform.position.x, 
+                    nextCard.transform.position.y, 
+                    nextCardZ
+                );
+            
+            nextCard.transform.GetChild(0).
+                GetComponent<Canvas>().sortingOrder = CARD_ORDER_BASE - i;
+        }
+        
+        if (updatePositions) UpdateCardPositions(location);
+    }
+    
+    private static void UpdateCardPositions(CardLocations location)
     {
         Transform cardHolder = null;
         float areaWidth = 0;
@@ -206,67 +256,16 @@ namespace Game.Global
 
             Vector3 nextPos = new Vector3(cardPositions[nextPosIndex], nextCard.transform.position.y, nextCard.transform.position.z);
             nextCard.DOMove
-            (
-                nextPos, 
-                CalculateCardMoveDuration(nextPos, nextCard)
-            )
+                (
+                    nextPos, 
+                    CalculateCardMoveDuration(nextPos, nextCard)
+                )
                 .SetEase(Ease.OutQuint);
             
             nextPosIndex++;
  
         }
-        //UpdateCardOrder(cardHolder);
     } 
-    
-    /// <summary>
-    /// This function sets the Z order and Sorting order of all cards in given container according to their sibling index.
-    /// </summary>
-    public static void UpdateCardOrder(CardLocations location, bool updatePositions = true)
-    {
-    Transform cardHolder = null;
-    
-      switch (location)
-      {
-          case CardLocations.Hand:
-              cardHolder = Global.handCardHolder;
-              //areaWidth = handBounds.size.x;
-              break;
-            
-          case CardLocations.Arena:
-              cardHolder = Global.arenaCardHolder;
-              //areaWidth = arenaBounds.size.x;
-              break;
-                
-      }
-        if (cardHolder == Global.arenaCardHolder) 
-            Debug.Log("------STARTING Z ORDERING IN ARENA-----");
-        
-        if (cardHolder == Global.handCardHolder) 
-            Debug.Log("------STARTING Z ORDERING IN HAND-----");
-        
-        for (int i = 0; i < cardHolder.childCount; i++)
-        {
-            Transform nextCard = cardHolder.GetChild(i);
-            float nextCardZ = 0 + i;
-            
-            nextCard.transform.localScale = new Vector3(1, 1, 1);
-            
-            if (cardHolder == Global.arenaCardHolder) 
-                Debug.Log($"Next Card Z: {nextCardZ}");
-            
-            nextCard.transform.position = new Vector3
-                (
-                    nextCard.transform.position.x, 
-                    nextCard.transform.position.y, 
-                    nextCardZ
-                );
-            
-            nextCard.transform.GetChild(0).
-                GetComponent<Canvas>().sortingOrder = CARD_ORDER_BASE - i;
-        }
-        
-        if (updatePositions) UpdateCardPositions(location);
-    }
     
 #endregion ---------------Card Utils----------//
     

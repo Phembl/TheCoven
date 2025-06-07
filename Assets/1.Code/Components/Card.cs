@@ -113,7 +113,7 @@ public class Card : MonoBehaviour
     void OnMouseDrag() 
     {
         if(currentState != CardStates.dragged) return;
-        if (currentLocation == CardLocations.Arena) return;
+        if (currentLocation != CardLocations.Hand) return;
         
         // Move card with mouse while maintaining offset
         transform.position = GetMouseWorldPosition() + dragOffset;
@@ -122,7 +122,7 @@ public class Card : MonoBehaviour
     void OnMouseUp()
     {   
         if(currentState != CardStates.dragged) return;
-        if (currentLocation == CardLocations.Arena) return;
+        if (currentLocation != CardLocations.Hand) return;
         
         if (hoverScaleTween != null) hoverScaleTween.Kill();
         if (transform.localScale.x != 1) hoverScaleTween = transform.DOScale(1f, scaleTweenTime).SetEase(Ease.OutQuad);
@@ -256,11 +256,13 @@ public class Card : MonoBehaviour
             yield return StartCoroutine
                 (AnimateCard(CardAnimations.ResolveStart));
             
+            currentState = CardStates.resolving;
+            
             int boardID = transform.GetSiblingIndex();
             foreach (Effect effect in nextCardEffects)
             {
                 yield return StartCoroutine(effect.DoEffect(boardID));
-                yield return new WaitForSeconds(0.5f * Global.timeMult);
+                yield return new WaitForSeconds(0.2f * Global.timeMult);
             }
             
             //Finish Up Card
@@ -290,7 +292,7 @@ public class Card : MonoBehaviour
         {
             float[] arenaPositions = Utility.CalculateCardPositions
             (
-                Global.arenaCardHolder.childCount + 1,
+                Global.arenaCardHolder.childCount + 2,
                 Utility.arenaBounds.size.x,
                 Utility.ARENA_CARDSPACING
             );
@@ -330,11 +332,16 @@ public class Card : MonoBehaviour
     public IEnumerator MoveCard
         (
             Vector3 targetPosition, 
-            CardLocations targetLocation
+            CardLocations targetLocation,
+            bool instant = false
         )
     {
         currentState = CardStates.moving;
-        float cardMoveTime = Utility.CalculateCardMoveDuration(targetPosition, transform);
+        
+        //Set Card Move Time
+        float cardMoveTime = 0f;
+        if (!instant) 
+            cardMoveTime = Utility.CalculateCardMoveDuration(targetPosition, transform);
 
         if (cardMove != null) cardMove.Kill();
         cardMove = transform.DOMove(targetPosition, cardMoveTime).SetEase(Ease.OutQuad);
@@ -344,29 +351,6 @@ public class Card : MonoBehaviour
         currentState = CardStates.resting;
         currentLocation = targetLocation;
     }
-
-    public void MoveCardNoWait
-        (
-            Vector3 targetPosition,
-            CardLocations targetLocation
-        )
-    {
-        currentState = CardStates.moving;
-
-        if (cardMove != null) cardMove.Kill();
-        cardMove = transform.DOMove
-            (
-                targetPosition,
-                Utility.CalculateCardMoveDuration(targetPosition, transform)
-            )
-            .SetEase(Ease.OutQuad)
-            .OnComplete(() =>
-            {
-                currentState = CardStates.resting;
-                currentLocation = targetLocation;
-            });
-    }
-    
     private Vector3 GetMouseWorldPosition() 
     {
         Vector3 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);

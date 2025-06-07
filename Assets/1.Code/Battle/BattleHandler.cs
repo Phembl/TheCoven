@@ -102,7 +102,6 @@ public class BattleHandler : MonoBehaviour
     }
     
 #endregion ------------Battle Setup------------//
-    
 
 #region ------------Board Resolve------------//
     

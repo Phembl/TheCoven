@@ -53,7 +53,7 @@ public class CardEffectHandler : MonoBehaviour
                 break;
             
             case CardEffectTypes.Tinker:
-                yield return EffectTinker(cardEffectData.gadget, gadgetTargetPos, gadgetTargetSiblingID);
+                yield return EffectTinker(cardEffectData.gadget.transform, gadgetTargetPos, gadgetTargetSiblingID);
                 break;
                 
         }
@@ -149,19 +149,22 @@ public class CardEffectHandler : MonoBehaviour
 
     private IEnumerator EffectTinker
         (
-            GameObject gadgetCard, 
+            Transform gadgetCard, 
             Vector3 gadgetTargetPos, 
             int gadgetTargetSiblingID
         )
     
     {
+        //Prepare gadget for Arena Placement
+        gadgetCard.SetParent(Global.arenaCardHolder);
+        gadgetCard.SetSiblingIndex(gadgetTargetSiblingID);
+        gadgetCard.GetChild(0).GetComponent<CanvasGroup>().alpha = 0;
         
-        gadgetCard.transform.SetParent(Global.arenaCardHolder);
-        gadgetCard.transform.SetSiblingIndex(gadgetTargetSiblingID);
-        gadgetCard.transform.GetChild(0).GetComponent<CanvasGroup>().alpha = 0;
-        gadgetCard.transform.position = gadgetTargetPos;
+        //Set gadget into arena (invisible)
+        yield return StartCoroutine (gadgetCard.gameObject.GetComponent<Card>().MoveCard
+            (gadgetTargetPos, CardLocations.Arena, true));
         
-        Utility.UpdateCardPositions(CardLocations.Arena);
+        Utility.UpdateCardOrder(CardLocations.Arena, true);
         
         yield return StartCoroutine
             (gadgetCard.GetComponent<Card>().AnimateCard(CardAnimations.Appear));
