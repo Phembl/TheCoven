@@ -6,15 +6,10 @@ public class Button_DrawCard : MonoBehaviour
 {
 
     private bool isInactive;
-    void Start()
-    {
-        
-    }
     
-
     void OnMouseDown()
     {
-        if (!isInactive)
+        if (!isInactive && BattleHandler.instance.isCurrentlyResolving == false)
         {
             isInactive = true;
 

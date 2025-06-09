@@ -92,7 +92,7 @@ namespace Game.Global
             BattleHandler.instance.UpdateCounter(BattleCounters.Deck, -1);
             
             // Wait before drawing next card for visual clarity
-            yield return new WaitForSeconds(0.2f * Global.timeMult);
+            yield return new WaitForSeconds(0.1f * Global.timeMult);
         }
         
         
@@ -193,11 +193,6 @@ namespace Game.Global
               break;
                 
       }
-        if (cardHolder == Global.arenaCardHolder) 
-            Debug.Log("------STARTING Z ORDERING IN ARENA-----");
-        
-        if (cardHolder == Global.handCardHolder) 
-            Debug.Log("------STARTING Z ORDERING IN HAND-----");
         
         for (int i = 0; i < cardHolder.childCount; i++)
         {
@@ -207,7 +202,6 @@ namespace Game.Global
             //nextCard.transform.localScale = new Vector3(1, 1, 1);
             
             if (cardHolder == Global.arenaCardHolder) 
-                Debug.Log($"Next Card Z: {nextCardZ}");
             
             nextCard.transform.position = new Vector3
                 (
@@ -309,6 +303,7 @@ public static void AddCardToArena(GameObject card)
         card.transform.SetParent(Global.exhaustCardHolder);
         card.transform.position = new Vector3(3000, 0, 0);
         card.transform.GetChild(0).GetComponent<CanvasGroup>().alpha = 1;
+        BattleHandler.instance.UpdateCounter(BattleCounters.Exhaust, 1);
     }
 
 #endregion ------------Exhaust Utils------------//  

@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: m_Name
-      value: Card_Character_4 Variant
+      value: Card_Character_4
       objectReference: {fileID: 0}
     - target: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: m_TagString
@@ -91,5 +91,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5608128373585619519}
   m_SourcePrefab: {fileID: 100100000, guid: b79817622b24f492581d07d26e94e803, type: 3}
+--- !u!1 &2622219016870397833 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
+  m_PrefabInstance: {fileID: 3848805478375298299}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-5608128373585619519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2622219016870397833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f88b5d37ebef438eacfcd1e5557368b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effect: 2
+  buffTarget: 1
+  buffAmount: 1
+  doublePower: 1
+  drawAmount: 1
+  gadgetPrefab: {fileID: 0}
+  gadgetTarget: 0
+  repeat: 0
+  repeatCount: 0

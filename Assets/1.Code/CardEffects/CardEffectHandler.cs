@@ -53,7 +53,7 @@ public class CardEffectHandler : MonoBehaviour
                 break;
             
             case CardEffectTypes.Tinker:
-                yield return EffectTinker(cardEffectData.gadget.transform, gadgetTargetPos, gadgetTargetSiblingID);
+                yield return EffectTinker(cardEffectData.gadget, gadgetTargetPos, gadgetTargetSiblingID);
                 break;
                 
         }
@@ -110,6 +110,10 @@ public class CardEffectHandler : MonoBehaviour
             case GadgetTargets.Right:
                 gadgetTargetSiblingID = resolverBoardID + 1;
                 break;
+            
+            case GadgetTargets.Left:
+                gadgetTargetSiblingID = resolverBoardID;
+                break;
         }
         
         gadgetTargetPos.x = newArenaPositions[gadgetTargetSiblingID];
@@ -149,13 +153,17 @@ public class CardEffectHandler : MonoBehaviour
 
     private IEnumerator EffectTinker
         (
-            Transform gadgetCard, 
+            GameObject gadgetCardPrefab, 
             Vector3 gadgetTargetPos, 
             int gadgetTargetSiblingID
         )
     
     {
         //Prepare gadget for Arena Placement
+        Vector3 gadgetSpawnPos = new Vector3(3000, 0, 0);
+        Transform gadgetCard = 
+            Instantiate(gadgetCardPrefab, gadgetSpawnPos, Quaternion.identity).transform;
+        
         gadgetCard.SetParent(Global.arenaCardHolder);
         gadgetCard.SetSiblingIndex(gadgetTargetSiblingID);
         gadgetCard.GetChild(0).GetComponent<CanvasGroup>().alpha = 0;

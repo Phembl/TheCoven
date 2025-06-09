@@ -4,18 +4,14 @@ public class Button_Resolve : MonoBehaviour
 {
 
     private bool isInactive;
-    void Start()
-    {
-        
-    }
-    
+
 
     void OnMouseDown()
     {
-        if (!isInactive)
+        if 
+            (BattleHandler.instance.isCurrentlyResolving == false &&
+             BattleHandler.instance.arenaCardHolder.childCount > 0)
         {
-            isInactive = true;
-
             BattleHandler.instance.ResolveButtonIsPressed();
         }
     }

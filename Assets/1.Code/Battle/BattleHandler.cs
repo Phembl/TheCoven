@@ -16,17 +16,17 @@ public class BattleHandler : MonoBehaviour
     [HideInInspector] public int currentEnemyHealth;
     [HideInInspector] public int currentDeckSize;
     [HideInInspector] public int currentExhaustSize;
+    [HideInInspector] public bool isCurrentlyResolving;
     
     public static BattleHandler instance;
     
     [Tab("Battle")]
     public GameObject currentEnemy;
     public Deck currentDeck;
+    [Space] 
+    [SerializeField] private int cardDrawStart;
     [EndTab]
     
-    [Tab("Hand")]
-    public float delayBetweenDraws = 0.1f * Global.timeMult; // Delay between consecutive draws
-    [EndTab] 
     
     [Tab("Settings")]
     [Header("Card Holder References")]
@@ -40,6 +40,7 @@ public class BattleHandler : MonoBehaviour
     [Header("Area References")]
     public BoxCollider2D handBounds;
     public BoxCollider2D arenaBounds;
+    public Transform resolveIndicator;
     [Space] 
     [Header("UI References")]
     public TextMeshProUGUI attackPowerText;
@@ -50,6 +51,8 @@ public class BattleHandler : MonoBehaviour
     [EndTab] 
     
     private float timeMult = Global.timeMult;
+
+    private int cardsResolvedThisAttack;
     
     
     private void Awake()
@@ -59,20 +62,26 @@ public class BattleHandler : MonoBehaviour
 
     private void Start()
     {
-        InitializeBattle();
+        StartCoroutine(InitializeBattle());
     }
     
 #region ------------Battle Setup------------//
 
-    private void InitializeBattle()
+    private IEnumerator InitializeBattle()
     {
         attackPowerText.text = "";
         
-        InitializeDeck();
-        InitializeEnemy();
+        Debug.Log("---- BattleHandler: Initializing Deck Now ----");
+        yield return StartCoroutine(InitializeDeck());
+        
+        Debug.Log("---- BattleHandler: Initializing Enemy Now ----");
+        yield return StartCoroutine(InitializeEnemy());
+        
+        Debug.Log("---- BattleHandler: Initializing First Round Now ----");
+        yield return StartCoroutine(StartNewRound(cardDrawStart));
     }
 
-    private void InitializeDeck()
+    private IEnumerator InitializeDeck()
     {
         UpdateCounter(BattleCounters.Deck, currentDeck.cardsInDeck.Length);
         UpdateCounter(BattleCounters.Exhaust, 0);
@@ -84,12 +93,12 @@ public class BattleHandler : MonoBehaviour
             
             UpdateCounter(BattleCounters.Deck, 1);
         }
+        
+        yield break;
     }
 
-    private void InitializeEnemy()
+    private IEnumerator InitializeEnemy()
     {
-        Debug.Log("Initializing Enemy");
-        
         GameObject nextEnemy = Instantiate(currentEnemy);
         Enemy nextEnemyComponent = nextEnemy.GetComponent<Enemy>();
         nextEnemy.name = ($"Enemy ({nextEnemyComponent.enemyName})");
@@ -99,6 +108,19 @@ public class BattleHandler : MonoBehaviour
         
         
         //INIT ENEMY ACTIONS
+        
+        
+        yield break;
+    }
+
+    private IEnumerator StartNewRound(int cardsToDraw)
+    {
+        yield return StartCoroutine
+            (Utility.DrawCardsToHand(cardsToDraw));
+        
+        cardsResolvedThisAttack = 0;
+        isCurrentlyResolving = false;
+        
     }
     
 #endregion ------------Battle Setup------------//
@@ -112,48 +134,63 @@ public class BattleHandler : MonoBehaviour
     
     private IEnumerator ResolveArena() 
     {
+        isCurrentlyResolving = true;
+        Debug.Log("---- BattleHandler: Resolving Card Effects Now ----");
+        yield return StartCoroutine(ResolveCards());
+        yield return new WaitForSeconds(0.2f * timeMult);
         
-        //yield return StartCoroutine(ResolveEffects());
-       // yield return new WaitForSeconds(0.2f * timeMult);
+        Debug.Log("---- BattleHandler: Resolving Card Attacks Now ----");
         yield return StartCoroutine(ResolvePower());
         yield return new WaitForSeconds(0.2f * timeMult);
+        
+        Debug.Log("---- BattleHandler: Exhausting Card Attacks Now ----");
         yield return StartCoroutine(ExhaustCards());
+        yield return new WaitForSeconds(0.2f * timeMult);
+        
+        Debug.Log("---- BattleHandler: Starting New Round Now ----");
+        yield return StartCoroutine(StartNewRound(cardsResolvedThisAttack));
+        yield return new WaitForSeconds(0.2f * timeMult);
+        
+        
 
 
     }
-    
-    private IEnumerator ResolveEffects() // Is moved to Card
+
+    private IEnumerator ResolveCards()
     {
-        foreach (Transform nextCard in arenaCardHolder)
+        int index = 0;
+        int cardsToResolve = arenaCardHolder.childCount;
+
+        while (index < cardsToResolve)
         {
+            int currentIndex = index;
+            GameObject currentCard = arenaCardHolder.GetChild(index).gameObject;
             
-            //Animate Card
-            Card nextCardComponent = nextCard.GetComponent<Card>();
-            yield return StartCoroutine(nextCardComponent.AnimateCard(CardAnimations.ResolveStart));
+            Vector3 indicatorPos = new Vector3(currentCard.transform.position.x, resolveIndicator.position.y, resolveIndicator.position.z);
+            resolveIndicator.position = indicatorPos;
+
+            yield return StartCoroutine(currentCard.GetComponent<Card>().ResolveCardEffects());
             
-            // Get all Effect components on the next Card and resolves them
-            Effect[] nextCardEffects = nextCard.GetComponents<Effect>();
-            if (nextCardEffects.Length > 0)
+            int updatedIndex = currentCard.transform.GetSiblingIndex();
+
+            // If new cards were inserted before this one, adjust index accordingly
+            if (updatedIndex > currentIndex)
             {
-                int boardID = nextCard.transform.GetSiblingIndex();
-                foreach (Effect effect in nextCardEffects)
-                {
-                    yield return StartCoroutine(effect.DoEffect(boardID));
-                    yield return new WaitForSeconds(0.5f * timeMult);
-                }
+                index = updatedIndex + 1;
             }
-            
             else
             {
-                Debug.Log("No effect");
-                yield return new WaitForSeconds(0.2f * timeMult);
+                index++; // move to next card as usual
             }
+
+            cardsToResolve = arenaCardHolder.childCount; // in case more were added
             
-            //Finish Up Card
-            yield return StartCoroutine(nextCardComponent.AnimateCard(CardAnimations.ResolveEnd));
+            yield return new WaitForSeconds(0.3f * timeMult);
         }
         
-       
+        Vector3 indicatorPosIdle = new Vector3(3000, resolveIndicator.position.y, resolveIndicator.position.z);
+        resolveIndicator.position = indicatorPosIdle;
+        
     }
 
     private IEnumerator ResolvePower()
@@ -193,21 +230,19 @@ public class BattleHandler : MonoBehaviour
 
     private IEnumerator ExhaustCards()
     {
-        Debug.Log(arenaCardHolder.childCount);
         
-        foreach (Transform nextCard in arenaCardHolder)
+        while (arenaCardHolder.childCount > 0)
         {
-            StartCoroutine(nextCard.GetComponent<Card>().AnimateCard(CardAnimations.Exhaust));
+            GameObject nextCard = arenaCardHolder.GetChild(0).gameObject;
             
-            UpdateCounter(BattleCounters.Exhaust, 1);
-            
-            yield return new WaitForSeconds(0.4f * timeMult);
-        }
-
-        foreach (Transform nextCard in arenaCardHolder)
-        {
+            yield return StartCoroutine(nextCard.GetComponent<Card>().AnimateCard(CardAnimations.Exhaust));
             Utility.AddCardToExhaust(nextCard.gameObject);
+            
+            yield return new WaitForSeconds(0.3f * timeMult);
+
+            cardsResolvedThisAttack++;
         }
+        
       
     }
     

@@ -59,8 +59,6 @@ public class Card : MonoBehaviour
     {
         cardCanvas = transform.GetChild(0).GetComponent<Canvas>();
         cam = Camera.main;
-        
-        float waitAfterEffect = 0.2f * Global.timeMult;
     }
     
     #region ------------Card Mouse Interactions------------//
@@ -132,7 +130,7 @@ public class Card : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit2D rayHit = Physics2D.GetRayIntersection(ray, Mathf.Infinity, arenalayerMask);
         
-        if (rayHit)
+        if (rayHit && BattleHandler.instance.isCurrentlyResolving == false)
         {
             StartCoroutine(DropCardToArena());
         }
@@ -249,7 +247,8 @@ public class Card : MonoBehaviour
     {
         // Get all Effect components and resolves them
         Effect[] nextCardEffects = GetComponents<Effect>();
-        if (nextCardEffects.Length > 0)
+        
+        if (nextCardEffects.Length > 0) //Skip if card has no effect
         {
             currentState = CardStates.resolving;
             //Animate Card
@@ -262,7 +261,7 @@ public class Card : MonoBehaviour
             foreach (Effect effect in nextCardEffects)
             {
                 yield return StartCoroutine(effect.DoEffect(boardID));
-                yield return new WaitForSeconds(0.2f * Global.timeMult);
+                yield return new WaitForSeconds(0.3f * Global.timeMult);
             }
             
             //Finish Up Card
@@ -326,7 +325,7 @@ public class Card : MonoBehaviour
         
         yield return new WaitForSeconds(0.5f * Global.timeMult);
         
-        StartCoroutine(ResolveCardEffects());
+        //StartCoroutine(ResolveCardEffects());
     }
     
     public IEnumerator MoveCard

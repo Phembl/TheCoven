@@ -22,7 +22,11 @@ public class Effect : MonoBehaviour
     //If Buff
     [ShowIf("effect", CardEffectTypes.Buff)] 
     [SerializeField] private CardEffectTargets buffTarget = CardEffectTargets.Random;
+    [DisableIf("doublePower")]
     [SerializeField] private int buffAmount = 1;
+    [EndIf]
+    [SerializeField] private bool doublePower;
+    [EndIf]
     
     //If Carddraw
     [ShowIf("effect", CardEffectTypes.CardDraw)] 
@@ -71,13 +75,6 @@ public class Effect : MonoBehaviour
                 cardEffectStrength = 0;
                 gadgetName = gadgetPrefab.GetComponent<Gadget>().title;
                 cardEffectTarget = CardEffectTargets.None;
-                Vector3 newGadgetPos = new Vector3(-3000,0,0);
-                newGadget = Instantiate
-                    (
-                        gadgetPrefab, 
-                        newGadgetPos, 
-                        Quaternion.identity
-                    );
                 break;
             
         }
@@ -91,7 +88,7 @@ public class Effect : MonoBehaviour
         {
             cardEffectType = this.cardEffectType,
             cardEffectTarget = this.cardEffectTarget,
-            gadget = newGadget,
+            gadget = this.gadgetPrefab,
             gadgetTarget = this.gadgetTarget,
             gadgetName = this.gadgetName,
             cardEffectStrength = this.cardEffectStrength,
