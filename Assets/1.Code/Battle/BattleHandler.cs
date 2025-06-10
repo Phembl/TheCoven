@@ -8,6 +8,7 @@ using VInspector;
 using Random = UnityEngine.Random;
 using Game.CardEffects;
 using Game.Global;
+using Game.CharacterClasses;
 using TMPro;
 
 public class BattleHandler : MonoBehaviour
@@ -17,7 +18,7 @@ public class BattleHandler : MonoBehaviour
     [HideInInspector] public int currentDeckSize;
     [HideInInspector] public int currentExhaustSize;
     [HideInInspector] public bool isCurrentlyResolving;
-    [HideInInspector] public Dictionary<CharacterClasses, int> activeClasses;
+    private Dictionary<CharacterClasses, int> activeClasses;
     
     public static BattleHandler instance;
     
@@ -252,30 +253,23 @@ public class BattleHandler : MonoBehaviour
     
 #region ------------Battle States------------//
 
-    public void UpdateClassesInArena()
+    public void UpdateClassesInArena(GameObject lastPlayedCard)
     {
-
-        foreach (Transform cardTransform in arenaCardHolder)
-        {
-            GameObject cardObject = cardTransform.gameObject;
-
-            if (!cardObject.CompareTag("Character")) continue;
-
-            Character character = cardObject.GetComponent<Character>();
-            
-
-            // Check all 3 class slots
-            AddClassToDictionary(activeClasses, character.characterClass1);
-            AddClassToDictionary(activeClasses, character.characterClass2);
-            AddClassToDictionary(activeClasses, character.characterClass3);
-            
-        }
+        if (!lastPlayedCard.CompareTag("Character")) return;
+        Character character = lastPlayedCard.GetComponent<Character>();
+        
+        // Check all 3 class slots
+        AddClassToDictionary(activeClasses, character.characterClass1);
+        AddClassToDictionary(activeClasses, character.characterClass2);
+        AddClassToDictionary(activeClasses, character.characterClass3);
         
         Debug.Log("---- BattleHandler: The Arena has the following classes:----");
         foreach (var entry in activeClasses)
         {
             Debug.Log($"{entry.Key}: {entry.Value}");
         }
+        
+        //CharacterClassHandler.UpdateCharacterClassEffects(activeClasses);
     }
     
     private void AddClassToDictionary(Dictionary<CharacterClasses, int> dict, CharacterClasses characterClass)

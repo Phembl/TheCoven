@@ -36,6 +36,9 @@ public class Character : MonoBehaviour
     public Image cardImage;
     public Image effectTextbox;
     public Image cardBackground;
+    [Space] 
+    public Transform classHolder;
+    public GameObject[] classIcons;
     [EndTab]
     
     //Enums
@@ -76,7 +79,58 @@ public class Character : MonoBehaviour
         titleText.text = title; //Write card title
         cardImage.sprite = image; // Set image sprite
         powerText.text = currentPower.ToString(); //Write Card Power
+
+        InitializeClasses();
+        InitializeHouses();
+        InitializeEffects();
+
+
+
+
+    }
+    
+#region ------------Character Initialization------------//
+
+    private void InitializeClasses()
+    {
+        // Add Class Icons
+        GameObject nextClassIcon = Instantiate(classIcons[(int)characterClass1]);
+        nextClassIcon.transform.SetParent(classHolder);
+
+        if (characterClass2 == CharacterClasses.None) return;
+        nextClassIcon = Instantiate(classIcons[(int)characterClass2]);
+        nextClassIcon.transform.SetParent(classHolder);
         
+        if (characterClass3 == CharacterClasses.None) return;
+        nextClassIcon = Instantiate(classIcons[(int)characterClass3]);
+        nextClassIcon.transform.SetParent(classHolder);
+
+    }
+
+    private void InitializeHouses()
+    {
+        switch (characterHouse)
+        {
+            case Houses.Cyber:
+                cardBackground.color = Color.black;
+                break;
+            case Houses.Beast:
+                cardBackground.color = Color.yellow;
+                break;
+            case Houses.Ying:
+                cardBackground.color = Color.red;
+                break;
+            case Houses.Downer:
+                cardBackground.color = Color.blue;
+                break;
+            case Houses.Sludge:
+                cardBackground.color = Color.green;
+                break;
+        }
+    }
+
+    private void InitializeEffects()
+    {
         //Checks for effects
         Effect[] cardEffects = GetComponents<Effect>();
         
@@ -101,26 +155,9 @@ public class Character : MonoBehaviour
             effectText.text = combinedEffectText;
             Debug.Log("CardEffectTexts:\n" + combinedEffectText.Trim());
         }
-
-        switch (characterHouse)
-        {
-            case Houses.Cyber:
-                cardBackground.color = Color.black;
-                break;
-            case Houses.Beast:
-                cardBackground.color = Color.yellow;
-                break;
-            case Houses.Ying:
-                cardBackground.color = Color.red;
-                break;
-            case Houses.Downer:
-                cardBackground.color = Color.blue;
-                break;
-            case Houses.Sludge:
-                cardBackground.color = Color.green;
-                break;
-        }
     }
+
+#endregion ------------Character Initialization------------//
     
     public void UpdatePower(int powerToAdd)
     {

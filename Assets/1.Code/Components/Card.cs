@@ -317,7 +317,7 @@ public class Card : MonoBehaviour
         
         if (cardMove != null) cardMove.Kill();
 
-        BattleHandler.instance.UpdateClassesInArena();
+        BattleHandler.instance.UpdateClassesInArena(gameObject);
         
         yield return new WaitForSeconds(0.1f);
         Utility.UpdateCardOrder(CardLocations.Arena);
