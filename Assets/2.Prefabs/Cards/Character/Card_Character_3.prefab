@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: m_Name
-      value: Card_Character_3 Variant
+      value: Card_Character_3
       objectReference: {fileID: 0}
     - target: {fileID: 1227875752028312434, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: m_TagString
@@ -83,6 +83,10 @@ PrefabInstance:
     - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: characterClass1
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      propertyPath: characterClass2
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -89,6 +89,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
+      propertyPath: characterClass2
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7072635524517289997, guid: b79817622b24f492581d07d26e94e803, type: 3}
       propertyPath: characterEffect
       value: 3
       objectReference: {fileID: 0}
@@ -120,8 +124,9 @@ MonoBehaviour:
   effect: 2
   buffTarget: 3
   buffAmount: 2
+  doublePower: 0
   drawAmount: 1
-  gadgetType: 0
+  gadgetPrefab: {fileID: 0}
   gadgetTarget: 0
   repeat: 0
   repeatCount: 0

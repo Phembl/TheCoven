@@ -2,6 +2,20 @@ using UnityEngine;
 
 namespace Game.Global
 {
+    public enum CharacterClasses
+    {
+        None,
+        Brawler,
+        Medic,
+        Soldier,
+        Hacker,
+        Sniper,
+        Trickster,
+        Tinkerer,
+        Technician,
+        Hexxe
+    }
+    
     public enum CardLocations
     {
         None,

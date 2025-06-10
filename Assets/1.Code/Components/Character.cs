@@ -24,9 +24,9 @@ public class Character : MonoBehaviour
     [Space] 
     [SerializeField] private Houses characterHouse = Houses.Cyber;
     [Space]
-    [SerializeField] private Classes characterClass1 = Classes.None;
-    [SerializeField] private Classes characterClass2 = Classes.None;
-    [SerializeField] private Classes characterClass3 = Classes.None;
+    public CharacterClasses characterClass1 = CharacterClasses.None;
+    public CharacterClasses characterClass2 = CharacterClasses.None;
+    public CharacterClasses characterClass3 = CharacterClasses.None;
     [EndTab]
 
     [Tab("References")]
@@ -39,19 +39,7 @@ public class Character : MonoBehaviour
     [EndTab]
     
     //Enums
-    private enum Classes
-    {
-        None,
-        Brawler,
-        Medic,
-        Soldier,
-        Hacker,
-        Sniper,
-        Trickster,
-        Tinkerer,
-        Technician,
-        Hexxe
-    }
+
 
     private enum Houses
     {
@@ -73,8 +61,6 @@ public class Character : MonoBehaviour
     {
         currentPower = basePower;
         InitializeCharacter();
-        
-        float waitAfterEffect = 0.2f * Global.timeMult;
     }
 
     void InitializeCharacter()

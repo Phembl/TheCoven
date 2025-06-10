@@ -12,11 +12,12 @@ using TMPro;
 
 public class BattleHandler : MonoBehaviour
 {
-    //Enemy
+   
     [HideInInspector] public int currentEnemyHealth;
     [HideInInspector] public int currentDeckSize;
     [HideInInspector] public int currentExhaustSize;
     [HideInInspector] public bool isCurrentlyResolving;
+    [HideInInspector] public Dictionary<CharacterClasses, int> activeClasses;
     
     public static BattleHandler instance;
     
@@ -55,6 +56,7 @@ public class BattleHandler : MonoBehaviour
     private int cardsResolvedThisAttack;
     
     
+    
     private void Awake()
     {
         if  (instance == null) instance = this;
@@ -62,6 +64,7 @@ public class BattleHandler : MonoBehaviour
 
     private void Start()
     {
+        activeClasses = new Dictionary<CharacterClasses, int>();
         StartCoroutine(InitializeBattle());
     }
     
@@ -120,6 +123,7 @@ public class BattleHandler : MonoBehaviour
         
         cardsResolvedThisAttack = 0;
         isCurrentlyResolving = false;
+        activeClasses.Clear();
         
     }
     
@@ -151,9 +155,6 @@ public class BattleHandler : MonoBehaviour
         yield return StartCoroutine(StartNewRound(cardsResolvedThisAttack));
         yield return new WaitForSeconds(0.2f * timeMult);
         
-        
-
-
     }
 
     private IEnumerator ResolveCards()
@@ -243,12 +244,49 @@ public class BattleHandler : MonoBehaviour
             cardsResolvedThisAttack++;
         }
         
+       
       
     }
     
 #endregion ------------Board Resolve------------//
     
 #region ------------Battle States------------//
+
+    public void UpdateClassesInArena()
+    {
+
+        foreach (Transform cardTransform in arenaCardHolder)
+        {
+            GameObject cardObject = cardTransform.gameObject;
+
+            if (!cardObject.CompareTag("Character")) continue;
+
+            Character character = cardObject.GetComponent<Character>();
+            
+
+            // Check all 3 class slots
+            AddClassToDictionary(activeClasses, character.characterClass1);
+            AddClassToDictionary(activeClasses, character.characterClass2);
+            AddClassToDictionary(activeClasses, character.characterClass3);
+            
+        }
+        
+        Debug.Log("---- BattleHandler: The Arena has the following classes:----");
+        foreach (var entry in activeClasses)
+        {
+            Debug.Log($"{entry.Key}: {entry.Value}");
+        }
+    }
+    
+    private void AddClassToDictionary(Dictionary<CharacterClasses, int> dict, CharacterClasses characterClass)
+    {
+        if (characterClass == CharacterClasses.None) return;
+
+        if (dict.ContainsKey(characterClass))
+            dict[characterClass]++;
+        else
+            dict[characterClass] = 1;
+    }
 
     public void UpdateCounter(BattleCounters counter, int changeValue)
     {

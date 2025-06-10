@@ -298,13 +298,11 @@ public class Card : MonoBehaviour
                 
             if (Input.mousePosition.x < Screen.width / 2) //Battlefield left
             {
-                Debug.Log("Dropping Card to Battlefield left");
                 nextCardPos.x = arenaPositions[0];
                 nextCardSiblingIndex = 0;
             }
             else //Battlefield right
             {
-                Debug.Log("Dropping Card to Battlefield right");
                 nextCardPos.x = arenaPositions[^1];
                 nextCardSiblingIndex = arenaPositions.Length - 1;
             }
@@ -318,6 +316,8 @@ public class Card : MonoBehaviour
             (MoveCard(nextCardPos, CardLocations.Arena));
         
         if (cardMove != null) cardMove.Kill();
+
+        BattleHandler.instance.UpdateClassesInArena();
         
         yield return new WaitForSeconds(0.1f);
         Utility.UpdateCardOrder(CardLocations.Arena);
