@@ -90,16 +90,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3854950076707402487, guid: bf5deccc3b677484586d042d4c627ba1, type: 3}
       propertyPath: m_Name
-      value: ClassIcon_Trickster
+      value: ClassIcon_6_Trickster
       objectReference: {fileID: 0}
     - target: {fileID: 4942507932326305911, guid: bf5deccc3b677484586d042d4c627ba1, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 14
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 5216784842612222384, guid: bf5deccc3b677484586d042d4c627ba1, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 3635378570788257410, guid: b9344d11968344a1eba1235033254195, type: 3}
+      objectReference: {fileID: -2522201039002090965, guid: d09f9291dd9644c52a45197283b9f8c5, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

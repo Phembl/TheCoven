@@ -93,6 +93,9 @@ public class BattleHandler : MonoBehaviour
         foreach (GameObject nextCardToAdd in currentDeck.cardsInDeck)
         {
             GameObject nextCard = Instantiate(nextCardToAdd, deckCardHolder);
+            yield return StartCoroutine
+                (nextCard.GetComponent<Character>().InitializeCharacter());
+            
             nextCard.transform.position = new Vector3(-3000,0,0);
             
             UpdateCounter(BattleCounters.Deck, 1);

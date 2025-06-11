@@ -15,7 +15,7 @@ PrefabInstance:
     - target: {fileID: 1849815827291786984, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -7746128187780714450, guid: 82a7496e54486406abf902c50746908a, type: 3}
+      objectReference: {fileID: -4613687578344833816, guid: dcd96a281ef4347fcac49aa7bf4348e0, type: 3}
     - target: {fileID: 5504751952161716797, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -98,7 +98,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7255839094466811311, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Name
-      value: ClassIcon_Technician
+      value: ClassIcon_8_Technician
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

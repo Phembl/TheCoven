@@ -15,7 +15,7 @@ PrefabInstance:
     - target: {fileID: 1849815827291786984, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 4744061240477576877, guid: 27a62e8a07b0d465cac75744f1dd190a, type: 3}
+      objectReference: {fileID: 2479950656128420777, guid: 2abf3fcb0bc59435d98ee36404309cbc, type: 3}
     - target: {fileID: 5504751952161716797, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -98,7 +98,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7255839094466811311, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Name
-      value: ClassIcon_Soldier Variant
+      value: ClassIcon_3_Soldier
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

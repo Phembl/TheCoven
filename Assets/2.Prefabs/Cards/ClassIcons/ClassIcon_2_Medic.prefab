@@ -10,12 +10,12 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1538317209997690671, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 22
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 1849815827291786984, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -375875754795284126, guid: acb665b5ff70a42e78c01b77caf902df, type: 3}
+      objectReference: {fileID: 830155674078844532, guid: c8d48b1420cc14f008a7d9f61bba373f, type: 3}
     - target: {fileID: 5504751952161716797, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -98,7 +98,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7255839094466811311, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Name
-      value: ClassIcon_Medic Variant
+      value: ClassIcon_2_Medic
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -19,7 +19,7 @@ PrefabInstance:
     - target: {fileID: 1849815827291786984, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 7993368931238903542, guid: 4e021163eaa0e48409d7686832d77622, type: 3}
+      objectReference: {fileID: 7993368931238903542, guid: ae138093b48d742c09cab8d44f0a29ef, type: 3}
     - target: {fileID: 5504751952161716797, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -102,7 +102,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7255839094466811311, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Name
-      value: ClassIcon_Sniper
+      value: ClassIcon_5_Sniper
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

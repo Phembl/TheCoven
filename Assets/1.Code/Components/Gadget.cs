@@ -1,3 +1,4 @@
+using System.Collections;
 using Game.Global;
 using TMPro;
 using UnityEngine;
@@ -23,22 +24,23 @@ public class Gadget : MonoBehaviour
     
     [Tab("References")]
     public TextMeshProUGUI titleText;
-    public TextMeshProUGUI powerText;
+    private TextMeshProUGUI powerText;
     public TextMeshProUGUI effectText;
     public Image cardImage;
     public Image effectTextbox;
     public Image cardBackground;
+    public Transform dataHolder;
+    public GameObject powerIconPrefab;
     [EndTab]
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         currentPower = basePower;
-        InitializeGadget();
     }
 
-    // Update is called once per frame
-    void InitializeGadget()
+    //This is called by CardEffectHandler -> EffectTinker()
+    public IEnumerator InitializeGadget()
     {
         //Check if everything is properly set up
         if (titleText == null) Debug.LogError("Title text is missing!");
@@ -46,12 +48,31 @@ public class Gadget : MonoBehaviour
         if (effectText == null) Debug.LogError("Effect text is missing!");
         if (cardImage == null) Debug.LogError("Card image is missing!");
         
+        yield return StartCoroutine(InitializeBase());
+        yield return StartCoroutine(InitializeEffects());
+        
+
+    }
+
+    private IEnumerator InitializeBase()
+    {
         cardComponent = gameObject.GetComponent<Card>();
         
         titleText.text = title; //Write card title
         cardImage.sprite = image; // Set image sprite
-        powerText.text = currentPower.ToString(); //Write Card Power
         
+        GameObject powerIcon = Instantiate(powerIconPrefab);
+        powerIcon.transform.SetParent(dataHolder);
+        powerText = powerIcon.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        
+        //Write Card Power into new PowerIcon
+        powerText.text = basePower.ToString();
+        
+        yield break;
+    }
+
+    private IEnumerator InitializeEffects()
+    {
         //Checks for effects
         Effect[] cardEffects = GetComponents<Effect>();
         if (cardEffects.Length == 0)
@@ -73,6 +94,8 @@ public class Gadget : MonoBehaviour
             effectText.text = combinedEffectText;
             Debug.Log("CardEffectTexts:\n" + combinedEffectText.Trim());
         }
+
+        yield break;
     }
     
     public void UpdatePower(int powerToAdd)

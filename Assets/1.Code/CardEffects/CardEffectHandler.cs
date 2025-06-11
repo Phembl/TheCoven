@@ -163,6 +163,8 @@ public class CardEffectHandler : MonoBehaviour
         Vector3 gadgetSpawnPos = new Vector3(3000, 0, 0);
         Transform gadgetCard = 
             Instantiate(gadgetCardPrefab, gadgetSpawnPos, Quaternion.identity).transform;
+
+        yield return StartCoroutine(gadgetCard.GetComponent<Gadget>().InitializeGadget());
         
         gadgetCard.SetParent(Global.arenaCardHolder);
         gadgetCard.SetSiblingIndex(gadgetTargetSiblingID);

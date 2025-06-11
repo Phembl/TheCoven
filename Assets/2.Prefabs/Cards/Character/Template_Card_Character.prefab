@@ -232,9 +232,9 @@ MonoBehaviour:
   cardImage: {fileID: 2286918029575814329}
   effectTextbox: {fileID: 8165958101852556986}
   cardBackground: {fileID: 1504550714721684459}
-  classHolder: {fileID: 8409194379907591325}
+  dataHolder: {fileID: 8409194379907591325}
   classIcons:
-  - {fileID: 0}
+  - {fileID: 7068431692065327344, guid: 6c8272b0dd9da4cab84bb67a3c1aa9d0, type: 3}
   - {fileID: 2683856115323632258, guid: e1fa421c12ff442a9acbe5c338997289, type: 3}
   - {fileID: 3993742680217066630, guid: 732ca88dfc9ad4b2595060789b8a1555, type: 3}
   - {fileID: 8609295509160888750, guid: 9ed5273a374e34985b9aec11ba61e852, type: 3}
@@ -692,7 +692,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1339021781328537448
 RectTransform:
   m_ObjectHideFlags: 0
@@ -710,7 +710,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 140.7, y: 205.7}
-  m_SizeDelta: {x: 85, y: 85}
+  m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8013460520789661264
 CanvasRenderer:
@@ -733,14 +733,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.6666667}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c3cd13d4f582b4752b420dc4437a1681, type: 3}
+  m_Sprite: {fileID: 1791327122712977108, guid: 3f3bab15ee5194682b43185d5dc25840, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -955,7 +955,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &19681431016957626
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1236,7 +1236,7 @@ GameObject:
   - component: {fileID: 5505225853209819669}
   - component: {fileID: 1192196328027774918}
   m_Layer: 0
-  m_Name: Classes
+  m_Name: Data
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1283,13 +1283,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding:
     m_Left: 0
-    m_Right: 10
-    m_Top: 98
+    m_Right: 5
+    m_Top: 5
     m_Bottom: 0
   m_ChildAlignment: 2
   m_StartCorner: 1
   m_StartAxis: 1
   m_CellSize: {x: 100, y: 100}
-  m_Spacing: {x: 0, y: -23.5}
+  m_Spacing: {x: 0, y: -24.21}
   m_Constraint: 0
   m_ConstraintCount: 2

@@ -15,7 +15,7 @@ PrefabInstance:
     - target: {fileID: 1849815827291786984, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -913150820736747277, guid: c0b1f30f570b942d991abaf2a259a9bb, type: 3}
+      objectReference: {fileID: 8464234050073833445, guid: ed9d1143a9a6e45b4bf2f4b200010fb4, type: 3}
     - target: {fileID: 5504751952161716797, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -98,7 +98,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7255839094466811311, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Name
-      value: ClassIcon_Hexxe
+      value: ClassIcon_9_Hexxe
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

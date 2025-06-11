@@ -10,12 +10,12 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1538317209997690671, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 18
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 1849815827291786984, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 4418669677039229993, guid: 4aa0ce87f45b8495a8adcbbd2f1c12b5, type: 3}
+      objectReference: {fileID: -7746128187780714450, guid: 5b2278bf696be494f8e9e34575c408af, type: 3}
     - target: {fileID: 5504751952161716797, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -98,7 +98,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7255839094466811311, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Name
-      value: ClassIcon_Hacker
+      value: ClassIcon_4_Hacker
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

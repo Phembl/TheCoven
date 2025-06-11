@@ -31,19 +31,16 @@ public class Character : MonoBehaviour
 
     [Tab("References")]
     public TextMeshProUGUI titleText;
-    public TextMeshProUGUI powerText;
+    private TextMeshProUGUI powerText;
     public TextMeshProUGUI effectText;
     public Image cardImage;
     public Image effectTextbox;
     public Image cardBackground;
     [Space] 
-    public Transform classHolder;
+    public Transform dataHolder;
     public GameObject[] classIcons;
     [EndTab]
     
-    //Enums
-
-
     private enum Houses
     {
         Cyber,
@@ -63,10 +60,11 @@ public class Character : MonoBehaviour
     void Start()
     {
         currentPower = basePower;
-        InitializeCharacter();
+        //InitializeCharacter();
     }
 
-    void InitializeCharacter()
+    //This is called by BattleHandler -> InitializeDeck()
+    public IEnumerator InitializeCharacter()
     {
         //Check if everything is properly set up
         if (titleText == null) Debug.LogError("Title text is missing!");
@@ -74,40 +72,48 @@ public class Character : MonoBehaviour
         if (effectText == null) Debug.LogError("Effect text is missing!");
         if (cardImage == null) Debug.LogError("Card image is missing!");
         
-        cardComponent = gameObject.GetComponent<Card>();
-        
-        titleText.text = title; //Write card title
-        cardImage.sprite = image; // Set image sprite
-        powerText.text = currentPower.ToString(); //Write Card Power
-
-        InitializeClasses();
-        InitializeHouses();
-        InitializeEffects();
-
-
-
-
+        yield return StartCoroutine(InitializeBase());
+        yield return StartCoroutine(InitializeClasses());
+        yield return StartCoroutine(InitializeHouses());
+        yield return StartCoroutine(InitializeEffects());
     }
     
 #region ------------Character Initialization------------//
 
-    private void InitializeClasses()
+    private IEnumerator InitializeBase()
+    {
+        cardComponent = gameObject.GetComponent<Card>();
+        
+        titleText.text = title; //Write card title
+        cardImage.sprite = image; // Set image sprite
+        
+        GameObject powerIcon = Instantiate(classIcons[0]);
+        powerIcon.transform.SetParent(dataHolder);
+        powerText = powerIcon.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        
+        //Write Card Power into new PowerIcon
+        powerText.text = basePower.ToString();
+       
+        
+        yield break;
+    }
+    private IEnumerator InitializeClasses()
     {
         // Add Class Icons
         GameObject nextClassIcon = Instantiate(classIcons[(int)characterClass1]);
-        nextClassIcon.transform.SetParent(classHolder);
+        nextClassIcon.transform.SetParent(dataHolder);
 
-        if (characterClass2 == CharacterClasses.None) return;
+        if (characterClass2 == CharacterClasses.None) yield break;
         nextClassIcon = Instantiate(classIcons[(int)characterClass2]);
-        nextClassIcon.transform.SetParent(classHolder);
+        nextClassIcon.transform.SetParent(dataHolder);
         
-        if (characterClass3 == CharacterClasses.None) return;
+        if (characterClass3 == CharacterClasses.None) yield break;
         nextClassIcon = Instantiate(classIcons[(int)characterClass3]);
-        nextClassIcon.transform.SetParent(classHolder);
-
+        nextClassIcon.transform.SetParent(dataHolder);
+        
     }
 
-    private void InitializeHouses()
+    private IEnumerator InitializeHouses()
     {
         switch (characterHouse)
         {
@@ -127,9 +133,11 @@ public class Character : MonoBehaviour
                 cardBackground.color = Color.green;
                 break;
         }
+        
+        yield break;
     }
 
-    private void InitializeEffects()
+    private IEnumerator InitializeEffects()
     {
         //Checks for effects
         Effect[] cardEffects = GetComponents<Effect>();
@@ -155,6 +163,8 @@ public class Character : MonoBehaviour
             effectText.text = combinedEffectText;
             Debug.Log("CardEffectTexts:\n" + combinedEffectText.Trim());
         }
+        
+        yield break;
     }
 
 #endregion ------------Character Initialization------------//
