@@ -10,16 +10,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1538317209997690671, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 24
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 1538317209997690671, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 22
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 1849815827291786984, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 7993368931238903542, guid: ae138093b48d742c09cab8d44f0a29ef, type: 3}
+      objectReference: {fileID: 21300000, guid: ae138093b48d742c09cab8d44f0a29ef, type: 3}
     - target: {fileID: 5504751952161716797, guid: c2c85faa096cf4951a7790e367526246, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

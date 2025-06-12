@@ -44,21 +44,31 @@ public class Card : MonoBehaviour
     private CardLocations currentLocation = CardLocations.Deck;
     [ShowInInspector, ReadOnly]
     private CardStates currentState = CardStates.resting;
+    [ReadOnly]
+    public int currentCardPower;
     
     private int originalSortingOrder;
     private Coroutine resetOrderCoroutine;
     private Tween cardMove;
+    private bool cardIsCharacter;
     
     //Object variables
     private Canvas cardCanvas;
     private GraphicRaycaster raycaster;
     private Camera cam;
+    private Character characterComponent;
 
 
     void Awake()
     {
         cardCanvas = transform.GetChild(0).GetComponent<Canvas>();
         cam = Camera.main;
+        
+        if (gameObject.CompareTag("Character"))
+        {
+            cardIsCharacter = true;
+            characterComponent = gameObject.GetComponent<Character>();
+        }
     }
     
     #region ------------Card Mouse Interactions------------//
@@ -243,6 +253,19 @@ public class Card : MonoBehaviour
     
     #region ------------Card Helper------------//
 
+    public IEnumerator AttackWithCard()
+    {
+        if (cardIsCharacter)
+        {
+            characterComponent.CheckClassEffectOnAttack();
+        }
+
+        
+        StartCoroutine(AnimateCard(CardAnimations.Attack));
+        
+     
+        yield break;
+    }
     public IEnumerator ResolveCardEffects()
     {
         // Get all Effect components and resolves them
@@ -317,7 +340,7 @@ public class Card : MonoBehaviour
         
         if (cardMove != null) cardMove.Kill();
 
-        BattleHandler.instance.UpdateClassesInArena(gameObject);
+        BattleHandler.instance.CheckAndUpdateActiveClasses();
         
         yield return new WaitForSeconds(0.1f);
         Utility.UpdateCardOrder(CardLocations.Arena);

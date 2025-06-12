@@ -18,7 +18,7 @@ public class BattleHandler : MonoBehaviour
     [HideInInspector] public int currentDeckSize;
     [HideInInspector] public int currentExhaustSize;
     [HideInInspector] public bool isCurrentlyResolving;
-    private Dictionary<CharacterClasses, int> activeClasses;
+    private Dictionary<CharacterClasses, int> currentlyActiveClasses = new();
     
     public static BattleHandler instance;
     
@@ -65,7 +65,6 @@ public class BattleHandler : MonoBehaviour
 
     private void Start()
     {
-        activeClasses = new Dictionary<CharacterClasses, int>();
         StartCoroutine(InitializeBattle());
     }
     
@@ -74,6 +73,8 @@ public class BattleHandler : MonoBehaviour
     private IEnumerator InitializeBattle()
     {
         attackPowerText.text = "";
+        
+        isCurrentlyResolving = true;
         
         Debug.Log("---- BattleHandler: Initializing Deck Now ----");
         yield return StartCoroutine(InitializeDeck());
@@ -101,7 +102,6 @@ public class BattleHandler : MonoBehaviour
             UpdateCounter(BattleCounters.Deck, 1);
         }
         
-        yield break;
     }
 
     private IEnumerator InitializeEnemy()
@@ -122,12 +122,14 @@ public class BattleHandler : MonoBehaviour
 
     private IEnumerator StartNewRound(int cardsToDraw)
     {
+        
+        
         yield return StartCoroutine
             (Utility.DrawCardsToHand(cardsToDraw));
         
         cardsResolvedThisAttack = 0;
         isCurrentlyResolving = false;
-        activeClasses.Clear();
+        currentlyActiveClasses.Clear();
         
     }
     
@@ -200,26 +202,16 @@ public class BattleHandler : MonoBehaviour
 
     private IEnumerator ResolvePower()
     {
-        int powerSum = 0;
         
         foreach (Transform nextCard in arenaCardHolder)
         {
-            int cardPower = 0;
+            
             Card nextCardComponent = nextCard.GetComponent<Card>();
             
-            // Animate Attack
-            StartCoroutine(nextCardComponent.AnimateCard(CardAnimations.Attack));
+            yield return StartCoroutine
+                (nextCardComponent.AttackWithCard());
 
-            // Get Power
-            if (nextCard.tag == "Character")
-            {
-                cardPower = nextCard.GetComponent<Character>().currentPower;  
-            }
-            
-            else if (nextCard.tag == "Gadget")
-            {
-                cardPower = nextCard.GetComponent<Gadget>().currentPower;  
-            }
+            int cardPower = nextCardComponent.currentCardPower;
             
             // Attack Enemy
             currentEnemyHealth -= cardPower;
@@ -227,7 +219,6 @@ public class BattleHandler : MonoBehaviour
             
             // Check Win
             if (currentEnemyHealth <= 0) WinBattle();
-            
             
             yield return new WaitForSeconds(0.5f * timeMult);
         }
@@ -256,25 +247,60 @@ public class BattleHandler : MonoBehaviour
     
 #region ------------Battle States------------//
 
-    public void UpdateClassesInArena(GameObject lastPlayedCard)
+        // Public method to check arena state and update class effects accordingly
+    public void CheckAndUpdateActiveClasses()
     {
-        if (!lastPlayedCard.CompareTag("Character")) return;
-        Character character = lastPlayedCard.GetComponent<Character>();
+        Dictionary<CharacterClasses, int> newActiveClasses = new();
+
+        // Step 1: Crawl through each card in the arena
+        foreach (Transform cardTransform in arenaCardHolder)
+        {
+            GameObject card = cardTransform.gameObject;
+            if (!card.CompareTag("Character")) continue;
+
+            Character character = card.GetComponent<Character>();
+            if (character == null) continue;
+
+            AddClassToDictionary(newActiveClasses, character.characterClass1);
+            AddClassToDictionary(newActiveClasses, character.characterClass2);
+            AddClassToDictionary(newActiveClasses, character.characterClass3);
+        }
+
+        // Step 2: Compare new state with current state and detect diffs
+        Dictionary<CharacterClasses, int> changes = new();
+
+        foreach (var entry in newActiveClasses)
+        {
+            currentlyActiveClasses.TryGetValue(entry.Key, out int previousCount);
+            if (entry.Value != previousCount)
+            {
+                changes[entry.Key] = entry.Value;
+            }
+        }
+
+        foreach (var entry in currentlyActiveClasses)
+        {
+            if (!newActiveClasses.ContainsKey(entry.Key))
+            {
+                changes[entry.Key] = 0; // Class has been removed completely
+            }
+        }
+
+        // Step 3: Notify the CharacterClassHandler of any changes
+        if (changes.Count > 0)
+        {
+            CharacterClassHandler.UpdateClassEffects(changes);
+            currentlyActiveClasses = new Dictionary<CharacterClasses, int>(newActiveClasses);
+        }
         
-        // Check all 3 class slots
-        AddClassToDictionary(activeClasses, character.characterClass1);
-        AddClassToDictionary(activeClasses, character.characterClass2);
-        AddClassToDictionary(activeClasses, character.characterClass3);
-        
-        Debug.Log("---- BattleHandler: The Arena has the following classes:----");
-        foreach (var entry in activeClasses)
+        // Debug: Always print current class counts
+        Debug.Log("-- Currently Active Classes --");
+        foreach (var entry in currentlyActiveClasses)
         {
             Debug.Log($"{entry.Key}: {entry.Value}");
         }
-        
-        //CharacterClassHandler.UpdateCharacterClassEffects(activeClasses);
     }
-    
+
     private void AddClassToDictionary(Dictionary<CharacterClasses, int> dict, CharacterClasses characterClass)
     {
         if (characterClass == CharacterClasses.None) return;

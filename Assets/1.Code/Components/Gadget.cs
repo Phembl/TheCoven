@@ -44,7 +44,6 @@ public class Gadget : MonoBehaviour
     {
         //Check if everything is properly set up
         if (titleText == null) Debug.LogError("Title text is missing!");
-        if (powerText == null) Debug.LogError("Power text is missing!");
         if (effectText == null) Debug.LogError("Effect text is missing!");
         if (cardImage == null) Debug.LogError("Card image is missing!");
         
@@ -67,6 +66,9 @@ public class Gadget : MonoBehaviour
         
         //Write Card Power into new PowerIcon
         powerText.text = basePower.ToString();
+        
+        powerText.text = currentPower.ToString();
+        cardComponent.currentCardPower = currentPower;
         
         yield break;
     }
@@ -109,5 +111,6 @@ public class Gadget : MonoBehaviour
         if (currentPower < basePower) powerText.color = Color.red;
         
         powerText.text = currentPower.ToString();
+        cardComponent.currentCardPower = currentPower;
     }
 }

@@ -5,13 +5,14 @@ using UnityEngine.UI;
 using VInspector;
 using DG.Tweening;
 using Game.Global;
+using Game.CharacterClasses;
 
 public class Character : MonoBehaviour
 {
     //Values
     [HideInInspector] public int currentPower;
     private Card cardComponent;
-    
+
     //Editor
     [Tab("Properties")]
     [Header("Character Values")]
@@ -59,8 +60,7 @@ public class Character : MonoBehaviour
     
     void Start()
     {
-        currentPower = basePower;
-        //InitializeCharacter();
+        
     }
 
     //This is called by BattleHandler -> InitializeDeck()
@@ -68,7 +68,6 @@ public class Character : MonoBehaviour
     {
         //Check if everything is properly set up
         if (titleText == null) Debug.LogError("Title text is missing!");
-        if (powerText == null) Debug.LogError("Power text is missing!");
         if (effectText == null) Debug.LogError("Effect text is missing!");
         if (cardImage == null) Debug.LogError("Card image is missing!");
         
@@ -82,6 +81,8 @@ public class Character : MonoBehaviour
 
     private IEnumerator InitializeBase()
     {
+        currentPower = basePower;
+        
         cardComponent = gameObject.GetComponent<Card>();
         
         titleText.text = title; //Write card title
@@ -92,7 +93,8 @@ public class Character : MonoBehaviour
         powerText = powerIcon.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         
         //Write Card Power into new PowerIcon
-        powerText.text = basePower.ToString();
+        powerText.text = currentPower.ToString();
+        cardComponent.currentCardPower = currentPower;
        
         
         yield break;
@@ -115,25 +117,32 @@ public class Character : MonoBehaviour
 
     private IEnumerator InitializeHouses()
     {
+        Color houseColor = new Color(1, 1, 1, 1);
+        
         switch (characterHouse)
         {
             case Houses.Cyber:
-                cardBackground.color = Color.black;
+                ColorUtility.TryParseHtmlString("#5A5A5A", out houseColor);
                 break;
             case Houses.Beast:
+                ColorUtility.TryParseHtmlString("#E38C3F", out houseColor);
                 cardBackground.color = Color.yellow;
                 break;
             case Houses.Ying:
+                ColorUtility.TryParseHtmlString("#5A5A5A", out houseColor);
                 cardBackground.color = Color.red;
                 break;
             case Houses.Downer:
+                ColorUtility.TryParseHtmlString("#5A5A5A", out houseColor);
                 cardBackground.color = Color.blue;
                 break;
             case Houses.Sludge:
+                ColorUtility.TryParseHtmlString("#5A5A5A", out houseColor);
                 cardBackground.color = Color.green;
                 break;
         }
         
+        cardBackground.color = houseColor;
         yield break;
     }
 
@@ -161,7 +170,6 @@ public class Character : MonoBehaviour
 
             // Sets EffectText
             effectText.text = combinedEffectText;
-            Debug.Log("CardEffectTexts:\n" + combinedEffectText.Trim());
         }
         
         yield break;
@@ -180,6 +188,12 @@ public class Character : MonoBehaviour
         if (currentPower < basePower) powerText.color = Color.red;
         
         powerText.text = currentPower.ToString();
+        cardComponent.currentCardPower = currentPower;
+    }
+
+    public void CheckClassEffectOnAttack()
+    {
+        
     }
     
 }

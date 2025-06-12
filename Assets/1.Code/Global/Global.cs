@@ -2,19 +2,7 @@ using UnityEngine;
 
 namespace Game.Global
 {
-    public enum CharacterClasses
-    {
-        None,
-        Brawler,
-        Medic,
-        Soldier,
-        Hacker,
-        Sniper,
-        Trickster,
-        Tinkerer,
-        Technician,
-        Hexxe
-    }
+
     
     public enum CardLocations
     {
@@ -68,6 +56,13 @@ namespace Game.Global
         PLACEHOLDER6,
         PLACEHOLDER7,
         PLACEHOLDER8
+    }
+
+    public enum ButtonTypes
+    {
+        None,
+        Resolve,
+        Redraw
     }
     
     public static class Global
